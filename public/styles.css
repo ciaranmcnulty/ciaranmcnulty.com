@@ -1,8 +1,8 @@
 body { 
-    font-size: 14pt;
+    font-size: 12pt;
     font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
     color: #666;
-    width: 40em;
+    width: 50em;
     border: solid #666 1px;
     margin: 1em auto;
     padding: 0;
@@ -22,15 +22,27 @@ section{
     padding: 0.5em;
     margin: 0;
 }
-section h2{
+section h2, section h3{
     font-size: 1.2em;
     font-weight: normal;
     margin: 0 0 0.43em 0;
     padding: 0;
+    color: #333;
 }
-section h2:after{
+section h2:after {
     content: ":";
 }
+section#blog h2:after {
+    content: "";
+}
+section h3 time {
+    font-size: 0.8em;
+}
+
+section h3 time:before{
+    content: "at ";
+}
+
 section#intro ul, 
 section#intro ul li,
 section#bio ul, 
