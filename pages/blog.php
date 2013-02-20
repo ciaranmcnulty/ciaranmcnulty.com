@@ -16,7 +16,7 @@
     <?php require_once $blogFolder . $blog->url . '.html' ?>
 </section>
 
-<?php if ($blog->comments): ?>
+<?php if (property_exists($blog, 'comments') && $blog->comments): ?>
 <section id="comments">
     
     <h2>Comments</h2>

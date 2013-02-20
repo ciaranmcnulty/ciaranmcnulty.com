@@ -26,6 +26,7 @@ h1 a{
 section{
     padding: 0.5em;
     margin: 0;
+    display: block;
 }
 section h2, section h3{
     font-size: 1.2em;
