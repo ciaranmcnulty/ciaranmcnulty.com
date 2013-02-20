@@ -1,0 +1,116 @@
+<p>With the W3C's recent <a href="http://www.w3.org/News/2009#item119">announcement that work on XHTML 2.0 is not being continued</a>, it would be tempting to think that the HTML vs XHTML war has been 'won', and not by the side a lot of people wanted.</p>
+
+<p>However, that's a misconception.  XHTML is alive and well as part of <a href="http://www.w3.org/TR/html5/">HTML5</a>, on more or less equal terms with 'plain' HTML.  It's just not going to be replacing 'tag soup' any time soon unless people start using it!</p>
+
+<p>I'll be taking a look at the options authors have for producing XHTML markup, but lets first look at why someone might want to use XML.</p>
+
+<h4>Pros and cons of XHTML</h4>
+
+<p>Pros:</p>
+
+<ul>
+<li>Parsing - XHTML pages can be parsed using standard XML toolkits.</li>
+<li>Transforms - pages can have XSL transforms applied to them.</li>
+<li>Embedded content - pages can have other XML namespaces embedded into them.</li>
+<li>Unambiguous - the author doesn't have to remember whether a tag needs closing or not, or whether the tag should be upper or lowercase.  This also taps into the general developer's 'coolness' gene.</li>
+<li>XML is 'cool'.</li>
+</ul>
+
+<p>Cons:</p>
+
+<ul>
+<li>Brittleness - it's a lot easier to make a mistake that renders the page invalid XHTML.</li>
+<li>Deprecated JS - you can't use some constructs like document.write().</li>
+<li>No iFrames - these aren't supported in XHTML strict.</li>
+<li>MIME type - there is confusion about which type XHTML should be served as (see next section).</li>
+</ul>
+
+<p>To be honest, it is worth considering whether those pros are worth it for you.  There are plenty of people who think you should just use HTML 4.01 and not worry about XML.</p>
+
+<h4>Option 1: Use XHTML 1.1 and serve it as text/html</h4>
+
+<p>Just because XHTML 2.0 has gone away, it doesn't mean you have to jump on board XHTML 5 - browsers will continue supporting XHTML 1.1 for decades to come.</p>
+
+<p>There are a few caveats to consider when using XHTML but serving it as HTML. The <a href="http://www.w3.org/TR/xhtml-media-types/#text-html">W3C XHTML Media Types recommendation</a> states:</p>
+
+<blockquote>
+"In general, this media type is NOT suitable for XHTML except when the XHTML is conforms to the guidelines in Appendix A. In particular, 'text/html' is NOT suitable for XHTML Family document types that add elements and attributes from foreign namespaces, such as XHTML+MathML [...] XHTML documents served as 'text/html' will not be processed as XML"
+</blockquote>
+
+<p>In short, even if your DOCTYPE says your document is XHTML 1.1 Strict, your browser will not believe you and will basically parse it as HTML.  There is good reason for this -however: surveys suggest that less than 40% of documents online validate against the doctype they declare.</p>
+ 
+<p>Anecdotally, the Microformats community has developed a number of proxy services that take HTML pages as input and transform them to other document types, and nearly all of them have run into the problem of supposedly-XHTML documents causing errors when fed into XSL engines.  Most now run content through Tidy before processing.</p>
+
+<p>This option means:</p>
+
+<ul>
+<li>Your pages have to be valid HTML 4.01 anyway, by using the Appendix A compatibility guidelines.</li>
+<li>You can't use any of the XML features like namespaces.</li>
+<li>Consumers are advised not to trust that it's XML anyway, so browser will render it the same as HTML 4.01.</li>
+<li>Consequently, this option is best thought of as a subset of HTML 4.01 where the document just happens to also be valid XML.</li>
+</ul>
+
+<h4>Option 2: Use XHTML 1.1 served as application/xhtml+xml</h4>
+
+<p>The <a href="http://www.w3.org/TR/xhtml-media-types/#text-html">same W3C document quoted above</a> says:</p>
+
+<blockquote>
+"Family documents. 'application/xhtml+xml' should be used for serving XHTML documents to XHTML user agents (agents that explicitly indicate they support this media type)."
+</blockquote>
+
+<p>In short, even if you're serving documents as text/html to some clients, you should use application/xhtml+xml for those that say they can support it, like most modern browsers except IE.  Very few sites actually do this.</p>
+
+<p>The reason is that when served as application/xhtml+xml, browsers actually trust that your document is going to be XML and throw valiation errors or break when it's not.  Why is that bad? Well, it turns out it's actually pretty hard to guarantee this, even at the server side.</p>
+
+<p>Developers are reasonably conversant in XML syntax, but does that apply to everyone that gets to generate content on your site?  Maybe there's a junior front-end developer who knows how to bash HTML in Dreamweaver, maybe users can post content onto the site themselves, or maybe your super-genius senior developers will occasionally make a typo.</p>
+
+<p>Essentially the upshot of this option is:</p>
+<ul>
+<li>If you do this for some clients, you still have to do Option 1 for other users, which means you either have to do everything twice, or you have to duplicate your work.</li>
+<li>You have to do a lot more work ensuring that your markup is valid XML at the server side.</li>
+<li>You do get to use XML-specific features, as long as you don't mind not serving your content to some users.</li>
+</ul>
+
+<h4>Option 3: Use XHTML5</h4>
+
+<p>At this point in the post, you're probably thinking that XHTML is a bit of a mess, and might be hoping that I'm going to say that HTML5 solves all the problems.  Sadly, that's not the case.</p>
+
+<p>HTML5 does however clean the issues up somewhat. </p> 
+
+<p>For a start, unlike HTML 4.01 vs XHTML 1.1, the XML element of HTML5 is in the core of the specification.  The HTML5 spec (or proposed spec, I should say) defines the elements and attributes in terms of a parsed DOM, and then explains how they should be serialised into XML and 'HTML' forms.
+
+<p>The spec also goes to great lengths to specify a parsing and error-handling model for the HTML serialisations, so that browsers can know the 'right' way to parse seemingly-malformed content like &lt;p&gt;&lt;b&gt;&lt;/p&gt;&lt;/b&gt;> and get a consistent result.  This may seem like a waste of time in a world where XML exists, but in reality with so many hand-coded sites out there, it's a good idea to have a consistent set of rules about how to handle bad markup.</p>
+
+<p>One other way that HTML5 clarifies the split between HTML and XHTML is that the two document types share a consistent DOCTYPE:</p>
+
+<p>&lt;!DOCTYPE html&gt;</p>
+
+<p>Think about the current generation's situation:</p>
+<ul>
+<li>Documents served as text/html with the HTML 4 doctype are HTML</li>
+<li>Documents served as text/html with the XHTML 1.1 doctype are HTML and valid XHTML</li>
+<li>Documents served as application/xhtml+xml and the XHTML 1.1 doctype are XHTML</li>
+</ul>
+
+<p>By having a single DOCTYPE, HTML5 avoids the awkward middle situation:</p>
+<ul>
+<li>Documents served as text/html with the HTML5 doctype are HTML</li>
+<li>Documents served as application/xhtml+xml with the HTML docytpe are XHTML</li>
+</ul>
+
+<p>This option seems like a good one going forwards, as HTML5 elements become more and more supported by browsers:</p>
+<ul>
+<li>Authors who can guarantee their pages are valid XML can serve them as XHTML to supporting browsers.</li>
+<li>Authors who think their pages are probably XML can serve them as text/html and if any mistakes sneak in, it won't matter too much.  The HTML parsing engine in HTML5 should render their documents as intended anyway.</li>
+<li>Authors who don't want to worry about XML can write their pages as HTML and continue not to care about whether they're parsable by XML toolkits, as they know that the content-type and DOCTYPE they're using offer no such guarantees to consumers.</li>
+</ul>
+
+<h4>The future</h4>
+
+<p>My own feeling is that the XHTML 1.1 specification didn't bring much to the table for browser manufacturers.  It defined a new MIME type for them to recognise, and started asking them to validate pages as XML in some instances, but didn't actually add much in terms of useful features - browsers already had an HTML rendering engine after all, so it's not as if XHTML made anything easier for them.</p>
+
+<p>Also from the development side, XHTML was implemented on sites for a few different motivations: a sense of neatness, the wish to keep up with the latest thing, but there was rarely a business case for its implementation - very few sites rely on their output being parsable as XML.</p>
+
+<p>Hopefully by having XML at the core of the new specification, XHTML will be more and more embraced.  When user-agents are upgraded to parse the new markup, programming teams will also feel the need to implement the XML parser as well as the HTML parser.  Similarly, when sites are redesigned to be HTML5-compatible, hopefully in a lot of cases XML-compatibility will be included in that work.</p>
+
+<p>However, in another sense hopefully HTML5's strong specification of how HTML should be parsed will enable browser manufacturers to further standardise how they treat 'tag soup', and maybe those amateur hand-coders out there will find that their non-validating badly-written code is at least achieving the goal of working roughly the same no matter what browser looks at it.</p>

@@ -1,0 +1,55 @@
+<div class="figure narrow">
+    <a href="http://www.flickr.com/photos/ciaranmcnulty/2709794945/" title="Screengrab of my site on iPhone, on Flickr"><img src="http://farm4.static.flickr.com/3256/2709794945_dfc58b0dcf_m.jpg" width="160" height="240" alt="Screengrab of my site on iPhone" /></a>
+    <p class="caption">The unmodified site</p>
+</div>
+
+<p>The first thing I should probably mention is that yes, despite <a href="http://ciaranmcnulty.com/blog/2008/06/the-iphone-3g-vs-the-nokia-n95">saying I wouldn't</a>, I got an iPhone 3G relatively soon after release.  I'll skip the reasons why for now, that's for a future posting. Naturally the first thing I did upon getting my iPhone was to plug in my own site's URL into the browser and see how it did - you can see the result in the screengrab.</p>
+
+<p>You know what - it's not bad.  The site looks roughly as it should, and with a bit of zooming and panning around all the content is accessible. However, on first load the text isn't really legible and it's not making the best usage of the limited screen space on the iPhone.  Also, the large header graphic makes loading a bit strenuous over an EDGE connection when I'm not in 3G coverage.</p>
+
+<p>Simon has been blogging recently (<a href="http://pointbeing.net/weblog/2008/06/mobilising-a-website-part-1-the-problem.html">here</a> and <a href="http://pointbeing.net/weblog/2008/07/mobilising-a-website-part-2-strategies.html">here</a>), about 'mobilising' websites (and has written a good article on the subject for <a href="http://phparch.com">php|architect</a>) so it's something I've been thinking about lately and I decided to see what it would take to improve the way the page was rendered on iPhone.</p>
+
+<p>It's important to realise that this is a very niche pursuit.  What Simon's series of articles is talking about is enabling a site to be viewed from <em>any</em> mobile device, which is a very different kettle of fish from just making it work better on a fancy-pants iPhone - this is really just for my own edification.</p>
+
+<p>So, the first thing to do was to look through the <a href="http://developer.apple.com/documentation/AppleApplications/Reference/SafariWebContent/Introduction/chapter_1_section_1.html#//apple_ref/doc/uid/TP40002079-SW1">Apple documentation on iPhone web development</a>, which I found was well written and clearly laid out.</p>
+
+<p>The first thing I wanted to do was eliminate a lot of the whitespace on the right of the page.  Adding iPhone-only CSS is done using a CSS3 mechanism called <a href="http://www.w3.org/TR/css3-mediaqueries/">Media Queries</a>.  It's not an Apple-specific technology, it's from the <abbr title="World Wide Web Consortium">W3C</abbr> and is a generic way of applying complex rules as to which stylesheet(s) a specific device should use.</p>
+
+<p>I wrote a phone-specific stylesheet that normalised the column widths to the same as the content area and removed the header image.  The extra markup in the <tt>HEAD</tt> of my document looks like this:</p>
+
+<p><code class="html">
+&lt;link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="/css/iphone.css" />
+</code></p>
+
+<div class="figure narrow">
+    <a href="http://www.flickr.com/photos/ciaranmcnulty/2709902805/" title="My site on iPhone (better) by CiaranJMcNulty, on Flickr"><img src="http://farm4.static.flickr.com/3013/2709902805_55a284eab1_m.jpg" width="160" height="240" alt="My site on iPhone (better)" /></a>
+    <p class="caption">Reduced to 1 column</p>
+</div>
+
+<p>This says the specified stylesheet should only apply to devices that support Media Queries, consider themselves 'screen' devices, and have a screen width of less than 480 pixels.  This obviously applies to the iPhone, but hopefully more and more user agents will support Media Queries - they're a very powerful mechanism for specifying how a site should display on devices with a hugely varied range of capabilities.</p>
+
+<p>With the new CSS applied for iPhone, the site started to take shape.  The content was all in a nice vertical column, but the phone still wasn't displaying the page zoomed-in enough.</p>
+
+<p>One solution would be to change all of the page's sizings in CSS so that it fitted into the iPhone's default 980px-wide zoom level, but this seemed a bit messy as the extra CSS was so far fairly small and clean.</p>
+
+<p>Apple's solution to this a <tt>META</tt> tag to the <tt>HEAD</tt> of your document that specifies what zoom level to use on load.  My content was 516px wide so mine looks like this:</p>
+
+<p><code class="html">
+&lt;meta name="viewport" content="width=516" /&gt;
+</code></p>
+
+<p>You can do a lot with this <tt>META</tt> tag, such a disabling user zoom, but frankly I think it's a horrible solution. </p>
+
+<p>It lacks the granularity of something like Media Queries, so you're left specifying one common viewport for all 'viewport-aware' devices.  Hopefully there will be some way of specifying viewport dimensions in the stylesheet in future, or that I've missed something.</p>
+
+
+<div class="figure narrow">
+    <a href="http://www.flickr.com/photos/ciaranmcnulty/2710607314/" title="My site on iPhone (optimised) by CiaranJMcNulty, on Flickr"><img src="http://farm4.static.flickr.com/3189/2710607314_e023043dd5_m.jpg" width="160" height="240" alt="My site on iPhone (optimised)" /></a>
+    <p class="caption">The final version</p>
+</div>
+
+<p>With this extra bit of information, Safari is now able to render the site in a much more usable form.  The single-column means only a vertical scroll is needed, with the sidebar items relegated to the bottom of the screen.  The text is legible from the offset, and the loading times are severely reduced.</p>
+
+<p>Obviously this is only a simple example, but hopefully it illustrates how a couple of simple steps that you can make fairly harmlessly to your markup, can vastly improve the browsing experience for the iPhone users amongst your audience.</p>  
+
+<p>Whether it's worth the effort for your site is a cost/benefit analysis you'll need to make for yourself, but I strongly believe that technologies like Media Queries will become more and more useful in future, as the current separation between 'computer' and 'mobile' browsers breaks down into a continuous spectrum of PCs, tablets, PDAs and tiny embedded browsers with a massive range of capabilities.</p>

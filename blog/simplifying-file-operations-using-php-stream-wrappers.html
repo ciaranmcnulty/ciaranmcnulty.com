@@ -1,0 +1,30 @@
+<p>When I took the <a href="http://ciaranmcnulty.com/blog/2008/07/some-thoughts-on-zend-php5-certification">Zend certification exam</a>, one of the areas I really wasn't very clear on was PHP's stream wrappers.  Since reading up on them for the exam, I've been kicking myself for not using them before, the amount of simplification they allow for common code is ridiculous.</p>
+
+<p>As an example, a colleague recently showed me some code he'd written that downloaded a .dat.gz file from a remote server, saved it to disk, unzipped it and save the expanded contents into a file. The original code he showed me was similar to the following (with a lot more error checking and comments):</p>
+
+<p><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php&nbsp;<br /><br />$tempfile&nbsp;</span><span style="color: #007700">=&nbsp;</span><span style="color: #0000BB">tempnam</span><span style="color: #007700">(</span><span style="color: #0000BB">sys_get_temp_dir</span><span style="color: #007700">());<br /><br /></span><span style="color: #FF8000">//&nbsp;get&nbsp;the&nbsp;file&nbsp;from&nbsp;FTP&nbsp;to&nbsp;local&nbsp;disk<br /></span><span style="color: #0000BB">$fh&nbsp;</span><span style="color: #007700">=&nbsp;</span><span style="color: #0000BB">ftp_connect</span><span style="color: #007700">(</span><span style="color: #DD0000">'ftphost.com'</span><span style="color: #007700">,&nbsp;</span><span style="color: #0000BB">21</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">ftp_login</span><span style="color: #007700">(</span><span style="color: #0000BB">$fh</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'username'</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'password'</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">ftp_get</span><span style="color: #007700">(</span><span style="color: #0000BB">$fh</span><span style="color: #007700">,</span><span style="color: #0000BB">$tempfile</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'/path/to/file.dat.gz'</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">ftp_close</span><span style="color: #007700">(</span><span style="color: #0000BB">$fh</span><span style="color: #007700">);<br /><br /></span><span style="color: #FF8000">//&nbsp;read&nbsp;data&nbsp;from&nbsp;local&nbsp;.gz&nbsp;into&nbsp;var<br /></span><span style="color: #0000BB">$gh&nbsp;</span><span style="color: #007700">=&nbsp;</span><span style="color: #0000BB">gzopen</span><span style="color: #007700">(</span><span style="color: #0000BB">$tempfile</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'r'</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">$data&nbsp;</span><span style="color: #007700">=&nbsp;</span><span style="color: #0000BB">gzread</span><span style="color: #007700">(</span><span style="color: #0000BB">$gh</span><span style="color: #007700">,&nbsp;</span><span style="color: #0000BB">1000000</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">gzclose</span><span style="color: #007700">(</span><span style="color: #0000BB">$gh</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">unlink</span><span style="color: #007700">(</span><span style="color: #0000BB">$tempfile</span><span style="color: #007700">);<br /><br /></span><span style="color: #FF8000">//&nbsp;write&nbsp;data&nbsp;to&nbsp;local&nbsp;.dat<br /></span><span style="color: #0000BB">file_put_contents</span><span style="color: #007700">(</span><span style="color: #DD0000">'/local/copy/of/file.dat'</span><span style="color: #007700">,&nbsp;</span><span style="color: #0000BB">$data</span><span style="color: #007700">);</span>
+
+</span>
+</code></p>
+
+<p>The first thing to note is that the ftp functions have an underscore in, while the gz functions don't.  To me at least, this makes it almost impossible to remember without constantly referring to the reference. The second thing to note is that by downloading the file to disk first, then reading it into memory, then writing it to disk, we're doing a three-step process.</p>
+
+<p>It might be possible to make this code more efficient using the ftp_* and gz* functions by keeping the data in memory more, and writing some sort of pipeline, but frankly stream wrappers are the way to go.  In fact, the whole thing can be rewritten using stream wrappers into a single line:</p>
+
+<p><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php&nbsp;<br /><br />copy</span><span style="color: #007700">(</span><span style="color: #DD0000">'compress.zlib://ftp://username:password@ftphost.com:21/path/to/file.dat.gz'</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'/local/copy/of/file.dat'</span><span style="color: #007700">);</span>
+
+</span>
+</code></p>
+
+<p>This has the following benefits:</p>
+
+<ul>
+    <li>The original complex operation is rephrased as a 'copy', so it's easier to see at a glance what's going on.</li>
+    <li>Data is pipelined straight to disk as soon as enough has been downloaded from the FTP to start being decoded.</li>
+    <li>It's far more compact.</li>
+</ul>
+
+ 
+<p>This is only really the tip of the iceberg when it comes to the power of stream wrappers, but hopefully enough to pique your interest enough that you <a href="http://uk2.php.net/manual/en/wrappers.php">go and see for yourself</a> how much more they can do for you.</p>

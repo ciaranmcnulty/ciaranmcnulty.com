@@ -1,0 +1,47 @@
+<p>A short while back, Google and a bunch of other search engines launched @rel="canonical", a standard for specifying that the current page is a copy of another, more canonical, version hosted elsewhere. <a href="http://ciaranmcnulty.com/blog/2009/02/rel-canonical-should-be-handled-with-care">I blogged about it at the time</a> , and generally approved of the idea but warned against overuse when an HTTP redirect might be more sensible.</p>
+  
+<p>Recently there's been a large amount of discussion about <a href="http://simonwillison.net/2009/Apr/11/revcanonical/">@rev="canonical"</a> , a proposal that seems to have been floated with the intention of providing <a href=http://revcanonical.appspot.com/ id=zueh title="URL shortening services">URL shortening services</a>. The idea is that my page can 'advertise' some other URLs that it can be found at so that clients can pick a different one to use when referring to it.</p>
+
+<p>In this particular use case I could publish a page at <strong><tt>http://ciaranmcnulty.com/blog/2009-04-14/a-long-blog-post-with-a-complex-url</tt></strong> that had a @rel="canonical" link to <strong><tt>http://ciaran.ws/complex</tt></strong> (I don't really have that domain, don't bother trying it). Applications that wanted a shorter URL for the content (e.g. Twitter clients, SMS gateways) could then use my shorter URL rather than having to get a more obfuscated one from <a href="http://tinyurl.com">TinyURL</a> or somewhere similar.</p>
+
+<p>The number of sites that have already included the markup is staggering in such a short time, and a testament to how a simple markup idea like this can really take off (if only Microformats could gain this kind of uptake!). I've been reading a lot of the commentary that's bouncing around the HTML blogosphere, and thought I'd put my &pound;0.02 in. Frankly, I fail to see the point of all the hooh-hah, for the following reasons:</p>
+
+<h4>@rev is deprecated.</h4>
+
+
+<p>@rev has been taken out of the proposed HTML5 specification because it's confusing and under-used, so this is probably the worst possible time to start a wide-ranging deployment of a new @rev value. The widespread use will have one of two results, either it'll be completely invalidated when HTML5 is finalised, or the deployment will cause @rev to be put back into the HTML5 spec. Either of these are bad results in my opinion.</p>
+
+<p>The reasons @rev was taken out of the HTML5 proposal are that basically:</p>
+
+<ol>
+  <li>Most uses of @rev turned out to be typos of @rel.</li>
+  <li>It was pointed that every @rev value could be turned into a @rel just by changing the keyword to indicate a reverse relation, e.g. @rev="parent" and @rel="child" are equivalent.</li>
+</ol>
+
+<p>On this basis, a better alternative to @rel="canonical" could be @rel="non-canonical" or something equally trivial - this could also be combined with @rel="alternate".</p>
+
+<h4>Using @rev="canonical" for redirect URLs is wrong</h4>
+
+<p>The idea of @rel="canonical" is to let search engines know that you have duplicate content at other URLs, and which version is the 'correct' one that they should be concentrating on including in their indexes. By that logic, @rev="canonical" should be a list of other URLs at which the same content as the current page exists, but would indicate to a search engine that the current URL is the one that should be used canonically. As an interesting use-case, a search engine could make indexing those URLs low-priority, or just ignore them completely.</p>
+
+<p>However, redirect URLs don't fit in with this usage. They're resources that will redirect to the current one, not resources that contain the same information. The distinction might seem like hair-splitting but I feel it's important that @rel="canonical" is seen as for situations where there are concrete individual pages at differenet URLs.</p>
+
+<p>On a related note, my friend Simon also has some strident opinions about 301 MOVED redirects from URLs that never initially hosted any content that I wish he'd blog about (hint hint!).</p>
+
+<h4>There are better semantics for URL shortening than @rev="canonical"</h4>
+
+<p>OK, so there's probably a use case for saying 'these other URLs have the same content as this page', but nearly all of the discussion has been concentrated on URL shortening.&nbsp; If we're going to use a head LINK to advertise a shorter URL for our content, there has to be a better way than saying 'these other URLs contain the same content' and letting the client check the length of each.</p>
+
+<p>I don't really know what to propose, but something like @rel="shorter-url" or @rel="short-url" or similar would seem to be sensible.&nbsp; Anything's fine as long as it's widespread and gets registered.&nbsp; It'd be nice if someone could knock up an HTML profile for us to use too, but they seem to be on the way out.</p>
+
+<p>Overall, the rev-canonical thing seems to be a fairly simple idea, with a few flaws, that's been overhyped and suddenly implemented everywhere with not much thought going into it.&nbsp; It may well achieve a few things though:</p>
+
+<ol>
+  <li>It's got people talking and thinking about @rel values, which is a good thing and might lead to more uptake of technologies like <a href="http://microformats.org/wiki/XFN">XFN</a>.</li>
+  <li>It's prompted a lot of discussion about HTML semantics, which is a good thing and could help promote <a href="http://microformats.org/wiki/posh">POSH</a> and <a href="http://microformats.org">Microformats in general</a>.</li>
+  <li>It's shown people how easy it can be to roll out a simple semantic HTML change on a large site, which has to be a good thing.</li>
+</ol>
+
+<p>I can only hope that that outweighs all the niggles I have with how rev-canonical is used, and frankly it's currently being used in such a narrow use-case that it doesn't really have a huge impact on the way we use the web.</p>
+
+<p>[EDIT: Just as I posted this, <a href=http://annevankesteren.nl/2009/04/rev-canonical id=ry8m title="Anne van Kesteren made the same points as me">Anne van Kesteren made the same points as me</a> , but in about 10% of the words and with none of the waffle.]</p>
