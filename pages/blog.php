@@ -7,11 +7,9 @@
 </head>
 
 <body>
-    
-<header>
-    <h1>Ciaran McNulty</h1>
-</header>
 
+<?php include $includesFolder . 'header-boilerplate.php' ?>
+    
 <section id="blog">
     <h2><?= htmlspecialchars($blog->title) ?></h2>
     <h3><time><?= date('c', strtotime($blog->created)) ?></time></h3>

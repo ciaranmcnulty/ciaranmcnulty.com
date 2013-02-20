@@ -8,9 +8,7 @@
 
 <body>
     
-<header>
-    <h1>Ciaran McNulty</h1>
-</header>
+<?php include $includesFolder . 'header-boilerplate.php' ?>
 
 <section id="error">
     <h2>Page not found</h2>
