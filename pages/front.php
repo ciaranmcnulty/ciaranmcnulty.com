@@ -9,7 +9,7 @@ $blogs = array_slice($blogs, -5);
 <head>
     <title>Ciaran McNulty</title>
     <?php include $includesFolder . 'head-boilerplate.php' ?>
-</head
+</head>
 
 <body>
 
