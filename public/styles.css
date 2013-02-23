@@ -64,3 +64,10 @@ section#profiles ul li
 section ul li:after{
     content: ".";
 }
+
+@media screen and (max-width: 480px){
+    body {
+        margin: 0;
+        width: 100%;
+    }
+}
