@@ -23,7 +23,7 @@ else if ( 0 === strpos($uri, '/blog') ) {
     
     // actual blog post that we want to redirect
     if (preg_match('#/blog/[0-9]+/[0-9]+/(?P<blog>.+)#', $uri, $matches)) {
-        header('HTTP/1.0 302 Moved');
+        header('HTTP/1.0 301 Moved');
         header('Location: /' . $matches['blog']);
         exit;
     }
