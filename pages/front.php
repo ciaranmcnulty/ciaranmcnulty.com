@@ -18,7 +18,7 @@ $blogs = array_slice($blogs, -5);
 <section id="intro">
     <h2>Who I am</h2>
     <ul>
-        <li>I am a web developer / project manager / scrum master who lives in South West London</li>
+        <li>I am a <a href="http://www.zend.com/en/yellow-pages#show-ClientCandidateID=ZEND008235" rel="me">web developer</a> / <a href="http://www.scrumalliance.org/profiles/162396-ciaran-j-mcnulty" rel="me">project manager / scrum master</a> who lives in South West London</li>
         <li>There's more to me than that but I don't like putting it all online! You can find out more if you get to know me</li>
     </ul>
 </section>
