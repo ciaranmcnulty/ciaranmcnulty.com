@@ -18,7 +18,7 @@ $blogs = array_slice($blogs, -5);
 <section id="intro">
     <h2>Who I am</h2>
     <ul>
-        <li>I am a <a href="http://www.zend.com/en/yellow-pages#show-ClientCandidateID=ZEND008235" rel="me">web developer</a> / <a href="http://www.scrumalliance.org/profiles/162396-ciaran-j-mcnulty" rel="me">project manager / scrum master</a> who lives in South West London</li>
+        <li>I am a <a href="http://www.zend.com/en/yellow-pages#show-ClientCandidateID=ZEND008235" rel="me">web developer</a> / <a href="http://www.scrumalliance.org/profiles/162396-ciaran-j-mcnulty" rel="me">project manager / scrum master</a> / trainer who lives in South West London</li>
         <li>There's more to me than that but I don't like putting it all online! You can find out more if you get to know me</li>
     </ul>
 </section>
@@ -28,7 +28,7 @@ $blogs = array_slice($blogs, -5);
     <ul>
         <li>I come from <a href="http://en.wikipedia.org/wiki/Stourbridge">Stourbridge</a> in the West Midlands</li>
         <li>I was educated at <a href="http://www.our-lady.dudley.sch.uk">Our Lady and St Kenelm's School</a>, <a href="http://www.hagleyrc.com">Hagley RC High School</a> and <a href="http://www.chu.cam.ac.uk">Churchill College, Cambridge</a></li>
-        <li>I have worked at <a href="http://www.themlondon.com">Them</a>, <a href="http://www.propertymall.com">PropertyMall</a> and <a href="http://www.beam.tv">Beam</a></li>
+        <li>I have worked at <a href="http://www.themlondon.com">Them</a>, <a href="http://www.propertymall.com">PropertyMall</a>, <a href="http://www.beam.tv">Beam</a> and <a href="http://inviqa.com">Inviqa</a></li>
     </ul>
 </section>
 
