@@ -37,6 +37,7 @@ $blogs = array_slice($blogs, -5);
     <ul>
         <li>I micro-blog on <a href="http://twitter.com/CiaranMcNulty" rel="me">Twitter</a></li>
         <li>I keep my photos in <a href="http://www.flickr.com/photos/ciaranmcnulty/" rel="me">Flickr</a></li>
+        <li>I have some tech videos on <a href="https://vimeo.com/ciaranmcnulty" rel="me">Vimeo</a></li>
         <li>You can see the music I listen to at <a href="http://www.last.fm/user/CiaranMcNulty/" rel="me">Last.fm</a></li>
         <li>There is some of my code on <a href="https://github.com/ciaranmcnulty" rel="me">Github</a></li>
         <li>My friends keep in touch with me on <a href="http://www.facebook.com/people/Ciaran_McNulty/600005468" rel="me">Facebook</a></li>
