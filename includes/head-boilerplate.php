@@ -6,3 +6,5 @@
 <!--[if gt IE 7]><!-->
 <link rel="stylesheet" href="/layout.css?v=1" />
 <!--<![endif]-->
+<link rel="openid.server" href="http://www.livejournal.com/openid/server.bml" />
+<link rel="openid.delegate" href="http://ciaranmcnulty.livejournal.com" />
