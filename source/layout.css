@@ -55,6 +55,19 @@ section{
             content: ".";
         }
 
+
+    section#blog pre {
+        display: block;
+        border: dashed #aaa 1px;
+        padding: 1em;
+    }
+
+
+    section#blog h1 {
+        border: 0;
+        font-size: 1em;
+    }
+
 @media screen and (max-width: 40em){
     body {
         margin: 0;
