@@ -15,4 +15,4 @@ before_script:
 script:
   - sh publish.sh
 after_success:
-  - git push origin -f master
+  - git push "https://github.com/ciaranmcnulty/ciaranmcnulty.com.git" -f master
