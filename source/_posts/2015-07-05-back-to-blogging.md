@@ -14,11 +14,11 @@ have happened in that time:
 In short, my professional life has changed hugely. I guess I'm now back in a place where I feel I can write longer-form stuff
 for a blog.
 
-I keep promising work that I'll write stuff for either the Inviqa or Sensio Labs UK sites, so will link out to there when
+I keep promising work that I'll write articles for either the Inviqa or Sensio Labs UK sites, so will link out to there when
 appropriate, but I wanted to have a place I could dash stuff off without editors being involved.
 
 So, I spent this morning switching the site over to the very cool [Sculpin][4], and started a few draft posts that I'll be pushing
-out in the future.
+out in the future. At some point I'll rejig the site's layout so it's a lot easier to find older content.
 
 My aim is to produce 1 blog per month. Will I stick to it? Time will tell...
 
