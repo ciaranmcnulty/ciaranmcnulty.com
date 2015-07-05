@@ -1,36 +1,46 @@
-<!DOCTYPE html>
-<html>
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title><![CDATA[Ciaran McNulty]]></title>
+    <link href="/blog/tags/science" rel="self"/>
+    <link href="/"/>
+    <updated>2015-07-05T16:59:03+01:00</updated>
+    <id>/</id>
+        <generator uri="http://sculpin.io/">Sculpin</generator>
+            <entry>
+            <title type="html"><![CDATA[Working out the speed of light using a fish pie]]></title>
+            <link href="/working-out-the-speed-of-light-using-a-fish-pie"/>
+            <updated>2009-04-20T00:00:00+01:00</updated>
+            <id>/working-out-the-speed-of-light-using-a-fish-pie</id>
+            <content type="html"><![CDATA[<p>Today I brought in some leftover fish pie for my lunch.  I heated it up in our office microwave, but didn't notice that the turntable had slipped off its axis, so the whole thing didn't turn.  When I came to eat the pie, there were hot and cold patches on the top, in a classic <a href="http://en.wikipedia.org/wiki/Interference_Pattern">interference pattern</a>.  Microwaves always have these hot and cold areas, which is why the turntable is important.</p>
 
-<head>
-    <title>Tag Archive "science" &mdash; Ciaran McNulty</title>
-    <!--[if lt IE 9]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <meta name="viewport" content="width=device-width" />
-    <link rel="stylesheet" href="/main.css?v=1" />
-    <!--[if gt IE 7]><!-->
-    <link rel="stylesheet" href="/layout.css?v=1" />
-    <!--<![endif]-->
-    <link rel="openid.server" href="http://www.livejournal.com/openid/server.bml" />
-    <link rel="openid.delegate" href="http://ciaranmcnulty.livejournal.com" />
-</head>
-<body>
-
-    <header>
-        <h1><a href="/">Ciaran McNulty</a></h1>
-    </header>
-
-        <section id="blog">
-        <h2>"science"</h2>
-        <h3>April 2009</h3>
-<article>
-  <div><a href="/working-out-the-speed-of-light-using-a-fish-pie">Working out the speed of light using a fish pie</a></div>
-</article>
-
-<div>
+<div class="figure">
+<a href="http://www.flickr.com/photos/ciaranmcnulty/3459410000/" title="No more pie by CiaranJMcNulty, on Flickr"><img src="http://farm4.static.flickr.com/3580/3459410000_9f5737f0ec_m.jpg" width="240" height="180" alt="No more pie" /></a>
+<p class="caption">Sadly the pie disappeared before I could take a picture</p>
 </div>
-    </section>
-    
-</body>
 
-</html>
+<p>My tupperware box is about 20cm across, and the hot patches were about half its width across, so I estimated the distance as 10cm.  The label on the microwave gave the frequency of the magnetron as 2.45GHz. The relationship between wavelength and frequency of a wave is as follows:</p>
+
+<blockquote>
+	<p>wavelength = speed of wave &times; frequency</p>
+	
+	<p>or:</p>
+	
+	<p>speed of wave = wavelength &divide; frequency</p>
+</blockquote>
+
+<p>So using my observed measurements of 10cm and 2.45GHz, this would give the speed of light as:</p>
+
+<blockquote>
+	<p>speed of wave = wavelength &divide; frequency</p>
+	<p><span style="visibility:hidden">speed of wave</span> = 10cm &divide; 2.45GHz</p>
+	<p><span style="visibility:hidden">speed of wave</span> = 1 &times; 10<sup>-1</sup>m &divide; 2.45 * 10<sup>-9</sup> /s</p>
+	<p><span style="visibility:hidden">speed of wave</span> = 1 &times; 10<sup>-1</sup>m &divide; 1/(2.45 * 10<sup>9</sup>) /s</p>
+	<p><span style="visibility:hidden">speed of wave</span> = 2.45 &times; 10<sup>8</sup>m/s</p>
+	<p><span style="visibility:hidden">speed of wave</span> = 245,000 km/s</p>
+</blockquote>
+
+<p>The actual speed of light is more like 299,792 km/s, so I'm in the right ball park but about 18% out.  The source of that error will be my 10cm estimate - working backwards it looks like the actual distance should be more like 12cm. </p>
+
+<p>Anyway, I hope that's piqued your interest, I may try and blog a few more experiments you can do around the office, as they occur to me!</p>]]></content>
+        </entry>
+    </feed>

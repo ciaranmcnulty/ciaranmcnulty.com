@@ -1,36 +1,182 @@
-<!DOCTYPE html>
-<html>
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title><![CDATA[Ciaran McNulty]]></title>
+    <link href="/blog/tags/mysql" rel="self"/>
+    <link href="/"/>
+    <updated>2015-07-05T16:59:03+01:00</updated>
+    <id>/</id>
+        <generator uri="http://sculpin.io/">Sculpin</generator>
+            <entry>
+            <title type="html"><![CDATA[Combining bordering ranges of data in MySQL]]></title>
+            <link href="/combining-bordering-ranges-of-data-in-mysql"/>
+            <updated>2009-02-12T00:00:00+00:00</updated>
+            <id>/combining-bordering-ranges-of-data-in-mysql</id>
+            <content type="html"><![CDATA[<p>A while back, a friend of mine was working on a database that contained bookings for some equipment, and he needed to separate it out into blocks representing when it was free and busy, regardless of whether the busy times were bookings by the same people or not.</p>
 
-<head>
-    <title>Tag Archive "mysql" &mdash; Ciaran McNulty</title>
-    <!--[if lt IE 9]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <meta name="viewport" content="width=device-width" />
-    <link rel="stylesheet" href="/main.css?v=1" />
-    <!--[if gt IE 7]><!-->
-    <link rel="stylesheet" href="/layout.css?v=1" />
-    <!--<![endif]-->
-    <link rel="openid.server" href="http://www.livejournal.com/openid/server.bml" />
-    <link rel="openid.delegate" href="http://ciaranmcnulty.livejournal.com" />
-</head>
-<body>
+<p>Just today, a different friend who works with mobile phones was dealing with a table that contained IP ranges and which network operator owned them.  He commented that he suspected a lot of the ranges overlapped or adjoined each other, and could be combined together into larger blocks.</p>
 
-    <header>
-        <h1><a href="/">Ciaran McNulty</a></h1>
-    </header>
+<p>Both of these problems are ones of finding <em>contiguous</em> (or, bordering) ranges inside data.  </p>
 
-        <section id="blog">
-        <h2>"mysql"</h2>
-        <h3>February 2009</h3>
-<article>
-  <div><a href="/combining-bordering-ranges-of-data-in-mysql">Combining bordering ranges of data in MySQL</a></div>
-</article>
+<p>It's tempting to try and approach the problem in an iterative way - find a block, try and find blocks border it, and work outwards from there but it's possible to solve this sort of thing in a non-iterative way with a single SQL query, which is what I'd like to show you how to do using MySQL.</p>
 
-<div>
-</div>
-    </section>
-    
-</body>
+<h4>The example data</h4>
 
-</html>
+<p>To try and come up with some example data, let's imagine a very simple table with three columns: id (the primary key), and low/high integer values (which would be indexed ideally).</p>
+
+<code><pre>ranges:
++----+-----+------+
+| id | low | high |
++----+-----+------+
+|  A |   6 |    8 | 
+|  B |   7 |    7 | 
+|  C |   8 |    9 | 
+|  D |   1 |    2 | 
+|  E |   3 |    4 | 
++----+-----+------+
+</pre></code>
+
+<p>We can visualise these ranges as follows:</p>
+
+<pre>
+A                |-------|
+B                   |-|
+C                      |----|
+D |----|
+E       |----|
+   1  2  3  4  5  6  7  8  9
+</pre>
+
+<p>It should be fairly apparent that some of these ranges overlap, and some border each other.  I'm going to use the term sub-range to mean these starting ranges, and super-range to mean the larger ranges we want to end up with (in this case 1-4 and 6-9).</p>
+
+<p>(I'm also going to ignore for now the fact that in real-world situations ranges might need to be combined separately, e.g. in the IP address example we'd only want to combine ranges that were the same operator).</p>
+
+<h4>Finding the maxima and minima</h4>
+
+<p>I'm going to define a minimum as the number at the bottom end of a super-range.  In our example data the minima would be 1 and 6.</p>  
+
+<p>So what are the properties of a minimum? Looking at the visualisation above, they are are:</p>
+
+<ul>
+	<li>They are the 'low' value of a sub-range</li>
+	<li>They do not overlap or border any other sub-ranges at the bottom end.</li>
+</ul>
+
+<p>We can write a query to find this in MySQL using a subquery as follows:</p>
+
+<code><pre>
+SELECT r.low AS low FROM ranges AS r
+WHERE NOT EXISTS(
+	SELECT * FROM ranges AS r1
+	WHERE r1.id != r.id
+	AND r1.low <= r.low
+	AND r1.high >= r.low-1
+);
+</pre></code>
+
+<p>This query is selecting low values where there does not exist a range that overlaps them (the <tt>r.low-1</tt> is to allow for bordering ranges).  As expected, it returns:</p>
+
+<pre>+-----+
+| low |
++-----+
+|   6 | 
+|   1 | 
++-----+
+</pre>
+
+<p>The efficiency of this query is reasonable when the relevant fields are indexed as (id,low,high), as the WHERE NOT EXISTS formulation allows the engine to bail out of the subquery as soon as one matching row is found.   It's worth noting that it could be rewritten as an OUTER JOIN but in my opinion would be less legible.</p>
+
+<p>Simply inverting this formulation gives us a query to find the maxima:</p>
+
+<code><pre>
+SELECT r.high AS high FROM ranges AS r
+WHERE NOT EXISTS(
+	SELECT * FROM ranges AS r1
+	WHERE r1.id != r.id
+	AND r1.high >= r.high
+	AND r1.low <= r.high + 1
+);
+</pre></code>
+
+<p>Again, the +1 in this is to allow for bordering ranges.  This would give us the following result:</p>
+
+<pre>+------+
+| high |
++------+
+|    4 | 
+|    9 | 
++------+
+</pre>
+
+<p>It's tempting to stop there, after all the results could now be combined in your application.  However, we can go a step further and combine the two into one bit of SQL.</p>
+
+<h4>Finding the ranges in one query</h4>
+
+<p>Basically we can combine these two together by taking the query that finds the minima, and inserting into its field list the query that finds the maxima, with a slight modification that we only want to find the smallest maximum that's greater than the minimum we're examining.</p>
+
+<pre>
+SELECT 
+r.low AS low,
+( 
+	SELECT MIN(r2.high)
+	FROM ranges AS r2
+	WHERE NOT EXISTS(
+		SELECT * FROM ranges AS r3
+		WHERE r3.id != r2.id
+		AND r3.high >= r2.high
+		AND r3.low <= r2.high + 1
+	)
+	AND r2.high>=r.low
+) AS high
+FROM ranges AS r
+WHERE NOT EXISTS(
+	SELECT * FROM ranges AS r1
+	WHERE r1.id != r.id
+	AND r1.low <= r.low
+	AND r1.high >= r.low-1
+);
+</pre>
+
+<p>Obviously, the output looks like:</p>
+
+<pre>+-----+------+
+| low | high |
++-----+------+
+|   6 |    9 | 
+|   1 |    4 | 
++-----+------+
+</pre>
+
+<p>It's a big query, but hopefully I've managed to format it legibly. It basically ends up doing four reasonably-indexed SELECTs from the same table, but in general that should scale better than any iterative solution.</p>
+
+<p>It also can be fairly easily modified to only combine sub-ranges that share some common features, with a few additional WHERE clauses, as in our IP address example.</p>
+
+<p>Hopefully this has been of use for some poor googler trying to solve this solution.  If anyone's got any real-world benchmarks for this sort of operation, or suggestions of how it could be improved I'd love to hear from them.</p>
+
+<p><em>Added 13th Feb:</em></p>
+
+<h4>Rewriting as a JOIN</h4>
+
+<p>Personally a lot of the time I find that subqueries are the clearest way of thinking about or writing a query.  However, some people are using a version of MySQL that doesn't support them, and sometimes they're not particularly efficient.</p>
+
+<p>To that end, here is essentially the same query redefined as a JOIN:</p>
+
+<code><pre>SELECT r.low AS low, MIN(r2.high) AS high 
+FROM ranges AS r
+LEFT JOIN ranges AS r1
+	ON r1.id != r.id
+	AND r1.low <= r.low
+	AND r1.high >= r.low-1
+INNER JOIN ranges AS r2
+	ON r2.id != r.id
+	AND r2.high >= r.low
+LEFT JOIN ranges AS r3
+	ON r3.id != r2.id
+	AND r3.high >= r2.high
+	AND r3.low <= r2.high + 1
+WHERE ISNULL(r1.id) AND ISNULL(r3.id)
+GROUP BY low;
+</pre></code>
+
+<p>It may well be that this approach ends up being more efficient, I intend to try and do some benchmarks in future.</p>]]></content>
+        </entry>
+    </feed>

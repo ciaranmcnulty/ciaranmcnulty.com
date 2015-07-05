@@ -1,3 +1,4 @@
-sculpin.phar
 output_dev
 .sculpin
+vendor
+bin

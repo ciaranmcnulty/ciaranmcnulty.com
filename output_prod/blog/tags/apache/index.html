@@ -1,36 +1,47 @@
-<!DOCTYPE html>
-<html>
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title><![CDATA[Ciaran McNulty]]></title>
+    <link href="/blog/tags/apache" rel="self"/>
+    <link href="/"/>
+    <updated>2015-07-05T16:59:03+01:00</updated>
+    <id>/</id>
+        <generator uri="http://sculpin.io/">Sculpin</generator>
+            <entry>
+            <title type="html"><![CDATA[Make all your sites work in IE8 with one fell swoop]]></title>
+            <link href="/make-all-your-sites-work-in-ie8-with-one-fell-swoop"/>
+            <updated>2009-04-17T00:00:00+01:00</updated>
+            <id>/make-all-your-sites-work-in-ie8-with-one-fell-swoop</id>
+            <content type="html"><![CDATA[<p>At work we have around 100 sites hosted for clients, some of which might not have been updated in a few years (I should point out these are sites we develop, so there's no chance a client's going to edit the site themselves).  <a href="http://blogs.msdn.com/ie/archive/2009/04/10/prepare-for-automatic-update-distribution-of-ie8.aspx">IE8 is going to be rolled out to Windows users with Automatic Updates enabled</a> as of next week, so there's a small worry about auditing these sites in time.</p>
 
-<head>
-    <title>Tag Archive "apache" &mdash; Ciaran McNulty</title>
-    <!--[if lt IE 9]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <meta name="viewport" content="width=device-width" />
-    <link rel="stylesheet" href="/main.css?v=1" />
-    <!--[if gt IE 7]><!-->
-    <link rel="stylesheet" href="/layout.css?v=1" />
-    <!--<![endif]-->
-    <link rel="openid.server" href="http://www.livejournal.com/openid/server.bml" />
-    <link rel="openid.delegate" href="http://ciaranmcnulty.livejournal.com" />
-</head>
-<body>
+<p>When IE7 came out we had to spend the time going through each of them manually and checking everything was fine.  This time around,<a href="http://msdn.microsoft.com/en-us/library/cc288325(VS.85).aspx"> although IE8 has a new rendering model, it's possible for the browser to render pages as if it was IE7</a>.  In general this has been hugely controversial, but for people in our situation it's pretty handy.</p>
 
-    <header>
-        <h1><a href="/">Ciaran McNulty</a></h1>
-    </header>
+<p>The easiest solution to having sites that may not work in the IE8 renderer is 'do nothing'.  IE8 has a compatibility button that a user can press that renders the page as if it's IE7.  If enough users press this button, a scary centralised Microsoft database marks you as a naughty site and from then on, IE8 users get to see you in 'compatibility mode' until some time in the future when you fix your site and manage to persuade Microsoft that you should be let back in to the halls of the worthy.</p>
 
-        <section id="blog">
-        <h2>"apache"</h2>
-        <h3>April 2009</h3>
-<article>
-  <div><a href="/make-all-your-sites-work-in-ie8-with-one-fell-swoop">Make all your sites work in IE8 with one fell swoop</a></div>
-</article>
+<p>However that sounds like a mess, relies on users jumping through some hoops, and might be a bit tricky to get off the list at a later date.  The strategy we've decided to go for is to explicitly mark all our sites as needing to be rendered in compatibility view, then turn this off for each site in turn as they're audited, at our leisure.</p>
 
-<div>
-</div>
-    </section>
-    
-</body>
+<p>The solution that Microsoft have provided is a new HTTP header, <tt>X-UA-Compatible</tt>.  The semantics of the header have been defined in a way that allows browsers aside from IE to use it but, frankly, I'll be quite upset if they do.</p>
 
-</html>
+<p>To mark an HTML page as needing to be rendered in IE7 mode, you'd include the following META tag as the first element in its HEAD, telling it to behave as IE7 would.  I've seen some advice online saying the value should be <tt>IE=IE7</tt>, but that will instruct the browser to use IE7 Standards Mode which  isn't ideal. The value I've used here, <tt>IE=EmulateIE7</tt> will tell IE8 to use either IE7 Standards Mode or IE7 Quirks Mode based on the page's <tt>&lt;!DOCTYPE&gt;</tt> using the same algorithm as IE7.</p>
+
+<p><code><pre>&lt;meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" /&gt;</pre></code></pre>
+
+<p>So there's one solution - go through all the sites and add that tag to the pages. I don't like it though, for a few reasons:</p>
+
+<ol>
+<li>It's still fairly labour-intensive to open a load of old sites, work out their templating system and add in the markup.</li>
+<li>This tag would be invalid in HTML5 and I don't want to get into bad habits.</li>
+<li>It feels like the HTML is being cluttered up.</li>
+</ol>
+
+<p>What we've gone with in our setup is to include this instruction as a real HTTP header in our Apache httpd.conf for all sites:</p>
+
+<p><code><pre>Header set X-UA-Compatible: IE=EmulateIE7</pre></code></p>
+
+<p>Now, all of our sites in one go should use the compatibility view.  Then, as we audit them we can add the following to the VirtualHost for each site:</p>
+
+<p><code><pre>Header unset X-UA-Compatible
+Header set X-UA-Compatible: IE=IE8 ; optional</pre></code></p>
+
+<p>Once we've tested each site, this will then tell IE8 to render using IE8's engine no matter what the compatibility database says.  You could leave off the header completely for sites, of course, but then you'll end up mired in the compatibility database. You would save the slight overhead of having an IE-specific header, though.</p>]]></content>
+        </entry>
+    </feed>

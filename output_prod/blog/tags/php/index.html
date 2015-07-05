@@ -1,74 +1,538 @@
-<!DOCTYPE html>
-<html>
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title><![CDATA[Ciaran McNulty]]></title>
+    <link href="/blog/tags/php" rel="self"/>
+    <link href="/"/>
+    <updated>2015-07-05T16:59:03+01:00</updated>
+    <id>/</id>
+        <generator uri="http://sculpin.io/">Sculpin</generator>
+            <entry>
+            <title type="html"><![CDATA[Faster failing Unit Tests]]></title>
+            <link href="/faster-failing-unit-tests"/>
+            <updated>2012-02-08T00:00:00+00:00</updated>
+            <id>/faster-failing-unit-tests</id>
+            <content type="html"><![CDATA[<p>One of the things about unit tests is that if they're going to fail, it's best if they fail quickly.
 
-<head>
-    <title>Tag Archive "php" &mdash; Ciaran McNulty</title>
-    <!--[if lt IE 9]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <meta name="viewport" content="width=device-width" />
-    <link rel="stylesheet" href="/main.css?v=1" />
-    <!--[if gt IE 7]><!-->
-    <link rel="stylesheet" href="/layout.css?v=1" />
-    <!--<![endif]-->
-    <link rel="openid.server" href="http://www.livejournal.com/openid/server.bml" />
-    <link rel="openid.delegate" href="http://ciaranmcnulty.livejournal.com" />
-</head>
-<body>
+<p>(This is also a key element of Scrum and other Agile approaches - if you're going to fail, do it as early as possible).
 
-    <header>
-        <h1><a href="/">Ciaran McNulty</a></h1>
-    </header>
+<p>I was listening to <a href="http://www.se-radio.net/2010/09/episode-167-the-history-of-junit-and-the-future-of-testing-with-kent-beck/">this old episode of Software Engineering Radio</a> and in it Kent Beck made the following observations:
 
-        <section id="blog">
-        <h2>"php"</h2>
-        <h3>February 2012</h3>
-<article>
-  <div><a href="/faster-failing-unit-tests">Faster failing Unit Tests</a></div>
-</article>
-        <h3>May 2011</h3>
-<article>
-  <div><a href="/use-labelled-groups-in-regular-expressions-for-clearer-code">Use labelled groups in Regular Expressions for clearer code</a></div>
-</article>
-    <h3>April 2011</h3>
-<article>
-  <div><a href="/using-partial-mocks-in-phpunit-to-test-tricky-code ">Using partial mocks in PHPUnit to test tricky code</a></div>
-</article>
-        <h3>April 2010</h3>
-<article>
-  <div><a href="/zend-framework-bindings-for-frontal">Zend Framework bindings for Frontal</a></div>
-</article>
-    <h3>March 2010</h3>
-<article>
-  <div><a href="/clarifying-javascript-php-communication-using-json-rpc">Clarifying Javascript-PHP communication using JSON-RPC</a></div>
-</article>
-        <h3>December 2009</h3>
-<article>
-  <div><a href="/why-you-should-close-php-sessions-as-soon-as-you-can">Why you should close PHP sessions as soon as you can</a></div>
-</article>
-    <h3>August 2009</h3>
-<article>
-  <div><a href="/doctrine-article-in-php-architect">Doctrine article in php|architect</a></div>
-</article>
-    <h3>June 2009</h3>
-<article>
-  <div><a href="/using-twitter-as-a-voting-platform">Using Twitter as a voting platform</a></div>
-</article>
-<article>
-  <div><a href="/Simplify-pagination-logic-using-a-custom-zend-paginator-adapter">Simplify pagination logic using a custom Zend_Paginator_Adapter</a></div>
-</article>
-    <h3>May 2009</h3>
-<article>
-  <div><a href="/article-in-php-architect-maybe">Article in php|architect (maybe)</a></div>
-</article>
+<ol>
+<li>Ideally you want to run the tests most likely to fail first, so that you get faster feedback
+<li>Statistically the most likely tests to fail are the ones that failed recently (i.e. if a test hasn't failed for a while it's less likely to fail next time).
+</ol>
 
-<div>
-    <nav class="article clearfix">
-            <a class="next" href="/blog/tags/2" title="Next Page"><span class="title">Next Page</span></a>
-        </nav>
-</div>
-    </section>
+<p>This really clicked with me, especially for things like CI, so I knocked up the following hacky script to run my phpunit tests through:
+
+<p><code><pre>
+&lt;?php
+
+$run_full = true;
+
+if (file_exists('last_run_report.xml')) {
     
-</body>
+    $failures = array();
+    $xml = simplexml_load_file('last_run_report.xml');
+    
+    if ($res = $xml-&gt;xpath('//error/../@file')) {
+        foreach ($res as $file) {
+            $failures[] = (string)$file;
+        }
+    }
 
-</html>
+    if ($failures) {
+        echo 'PREVIOUSLY FAILING TESTS', PHP_EOL;
+        echo '------------------------', PHP_EOL;
+        passthru('phpunit '.join(' ', $failures), $exit);
+        
+        if ($exit &gt; 0) { 
+            $run_full = false; 
+        }
+        else {
+            echo PHP_EOL;
+            echo 'FULL TEST SUITE', PHP_EOL;
+            echo '---------------', PHP_EOL;
+        }
+    }
+}
+
+if($run_full){
+    passthru('phpunit --log-junit last_run_report.xml');
+}
+</pre></code></p>
+
+<p>When I use this to run my test suite instead of straight phpunit, it results in a local file called last_run_report.xml being generated. Next time I run the report, if there were any errors, the report is parsed and the failing tests are executed first.
+
+<p>This is <em>really primitive</em> but is already saving me a little time. The next step would be to get a DB involved and maybe log the last few executions of the current suite, to get some stats on how unstable tests have been over the last few executions and prioritise them that way.
+
+<p>I'm sure there's a bunch of other analysis you could do to work out statistically which tests are likely to fail - you could even do some sort of static code analysis and work out which tests have ben potentially impacted since the last test run.
+
+<p>I'll be running this little script locally for now, but with an eye to including it in our CI environment once I've a bit more confidence that it's a valid approach.]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Use labelled groups in Regular Expressions for clearer code]]></title>
+            <link href="/use-labelled-groups-in-regular-expressions-for-clearer-code"/>
+            <updated>2011-05-12T00:00:00+01:00</updated>
+            <id>/use-labelled-groups-in-regular-expressions-for-clearer-code</id>
+            <content type="html"><![CDATA[<p>I keep seeing this sort of pattern in PHP code, when people match on Regular Expressions:
+
+<p><code><pre>
+$orderNumber = 'CLK-TEST001-030';
+$pattern = '/([a-z]+)-([a-z]+([0-9]+))?-([0-9]+)/i';
+
+if (preg_match($pattern , $orderNumber, $matches)) {
+    echo "Prefix was ".$matches[1]." and duration was ".$matches[4];
+} 
+</pre></code></p>
+
+<p>The problem here is that the numbers 4 and 1 are kind of cryptic. Furthermore if the expression changes in future I'll probably need to go through my code and redo the numbering.
+
+<p>A better alternative is to name the groups inside the expression:
+
+<p><code><pre>
+$orderNumber = 'CLK-TEST001-030';
+$pattern = '/(?&lt;prefix&gt;[a-z]+)-([a-z]+([0-9]+))?-(?&lt;duration&gt;[0-9]+)/i';
+
+if (preg_match($pattern , $orderNumber, $matches)) {
+    echo "Prefix was ".$matches['prefix'].
+        " and duration was ".$matches['duration'];
+} 
+</pre></code></p>
+
+<p>This way if the expression gets changed, I can still use the same named fields in my matches in the subsequent code.
+
+<p>I don't know why this isn't done more often, except perhaps poor documentation means that people just aren't aware of it?
+
+
+]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Using partial mocks in PHPUnit to test tricky code]]></title>
+            <link href="/using-partial-mocks-in-phpunit-to-test-tricky-code "/>
+            <updated>2011-04-30T00:00:00+01:00</updated>
+            <id>/using-partial-mocks-in-phpunit-to-test-tricky-code </id>
+            <content type="html"><![CDATA[<p>At work we've been going through the fairly painful process of adding unit tests to existing code. I'd like to share one technique I've found useful, a way of testing methods that at first glance look like they have too many dependencies to easily get under test.
+
+<p>I'll be giving these examples in PHPUnit but any xUnit framework should be able to do something similar.
+
+<p>Consider a method like the following, which is the sort of thing you might have trouble seeing how to test:
+
+<p><code><pre>
+class MyClass
+{
+    public function getDataAndPublishRemotely()
+    {
+        $data = DataStore::getUnpublishedData();
+        
+        $service = new SoapClient($SOME_WSDL);
+        $service-&gt;publish(preg_replace('/[^0-9a0z]+/', '', $data));
+    }
+} 
+</pre></code></p>
+
+<p>So this is doing some sort of DB call, then calling a SOAP service and publishing a cleaned-up version of the result. What makes this hard to test is the fact it's got two solid dependencies - a static call to some sort of DataStore layer and a direct instance of a SoapClient class.
+
+<p>Eventually the way to fix this sort of thing is to inject both of those dependencies separately, but that's too big a refactoring to tackle straight away. When you're modifying a class to get it under test you want to do small, easy-to-understand changes and get it under test ASAP.
+
+<p>One approach to getting it tested is to split the functionality that you think you can test into a separate method, like so:
+
+<p><code><pre>
+class MyClass
+{
+    public function getDataAndPublishRemotely()
+    {
+        $data = DataStore::getUnpublishedData();
+        $cleanData = $this-&gt;processData($data);
+        
+        $service = new SoapClient($SOME_WSDL);
+        $service-&gt;publish($cleanData);
+    }
+    
+    public function processData($data)
+    {
+        return preg_replace('/[^0-9a0z]+/', '', $data);
+    }
+}
+</pre></code></p>
+
+<p>Testing that functionality becomes pretty simple:
+
+<p><code><pre>
+class MyClassTest extends PHPUnit_Framework_Testcase
+{
+    public function testProcessData()
+    {
+        $data = ' hel123lo wo00rld    ';
+        $class = new MyClass();
+        
+        $result = $class-&gt;processData();
+        
+        $this-&gt;assertSame('hello world', $data);
+    }
+}
+</pre></code></p>
+
+<p>However there are a few things wrong with this approach, in my opinion. The first is that the new method has had to be public to be tested, so we've fundamentally changed the API of the class just for testing. The second is that we're not actually running the method we started off trying to test, which is unsatisfying. Thirdly, we're not aware whether the method is accessing the datastore or soap service at all, we're only testing the small bit of functionality we split off.
+
+<p>A better refactoring of the original class is to instead of splitting out the bits easy to test, split out the bits that are hard to test like so:
+
+<p><code><pre>
+class MyClass
+{
+    public function getDataAndPublishRemotely()
+    {
+        $data = $this-&gt;_getUnpublishedDataFromDatastore();
+        $cleanData = preg_replace('/[^0-9a0z]+/', '', $data);
+        $this-&gt;_publishDataRemotely($cleanData);
+    }
+    
+    protected function _getUnpublishedDataFromDatastore()
+    {
+        return DataStore::getUnpublishedData();
+    }
+    
+    protected function _publishDataRemotely($data)
+    {
+        $service = new SoapClient($SOME_WSDL);
+        $service-&gt;publish($data);
+    }
+}
+</pre></code></p>
+
+<p>It's important to note, I suppose, that this is longer than the original class! However, the API of the class hasn't changed, and all of the dependencies have been removed from the method we're interested in. The small additional methods that have been generated can be refactored out later, the point is to do this simple change and get the system under test as soon as possible, then we can do our subsequent refactoring with a safety net in place.
+
+<p>If you have an IDE that can do refactorings like this (Extract Method) for you, then use the features! It's easy to make a mistake in even a little refactoring like this one and you should be very nervous about untested code.
+
+<p>To test the class we need to replace the two protected functions. One way of doing that would be to write a concrete MyTestableClass that extends MyClass and replace those methods and test that instead, but we can achieve effectively the same thing in PHPUnit using Partial Mocks. A partial mock is one that behaves exactly like the original class except when certain specific methods are called.
+
+<p>The test for the class could therefore look something like the following, note that all of the testing is done via expectations on the mock rather than via assertions:
+
+<p><code><pre>
+class MyClassTest extends PHPUnit_Framework_Testcase
+{
+
+    public function testGetDataAndPublishRemotely()
+    {
+        $class = $this-&gt;getMock('MyClass', 
+            array('_getUnpublishedDataFromDatastore', '_publishDataRemotely'));
+        
+        $class-&gt;expects($this-&gt;once())
+            -&gt;method('_getUnpublishedDataFromDatastore')
+            -&gt;will($this-&gt;returnValue(' hel123lo wo00rld    '));
+            
+        $class-&gt;Expects($this-&gt;once())
+            -&gt;method('_publishDataRemotely')
+            -&gt;with($this-&gt;equalTo('hello world'));
+        
+        $class-&gt;getDataAndPublishRemotely();
+    }
+
+}
+</pre></code></p>
+
+<p>A purist might say that's testing too much in one test and should be decomposed into different tests, but it's concise enough for me. Note we're testing more than the previous example, which only tested the string cleanup. In this test we are testing:
+
+<ul>
+<li>The string processing</li>
+<li>The fact it requests the data from the DB</li>
+<li>The fact it subsequently tries to publish the data</li>
+</ul>
+
+<p>This isn't the end of the story, because testing a mock seems a bit wrong, and it would be nice to clear up those dependencies properly. The point is that we've done the simplest thing necessary to get the method into a test harness, and subsequent refactorings can all be done with the test suite in place giving you the developer additional confidence to make changes.]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Zend Framework bindings for Frontal]]></title>
+            <link href="/zend-framework-bindings-for-frontal"/>
+            <updated>2010-04-06T00:00:00+01:00</updated>
+            <id>/zend-framework-bindings-for-frontal</id>
+            <content type="html"><![CDATA[<p>Having thought further about <a href="/source/blog/2010/03/frontal-a-new-approach-to-triggering-javascript-behaviour">Frontal, Carl's JS library</a>, I wrote a quick View Helper to make it easier to use it in Zend Framework projects.</p>
+
+<p>It's <a href="http://dl.dropbox.com/u/1845336/Frontal-ZF.tar.gz">available to download</a> on Dropbox, it's available under the MIT licence.  I'll bung it up on somewhere like GitHub once I work out how Git works.</p>
+
+<h4>Basic usage</h4>
+
+<p>Before you do anything you'll need to register the helpers in your <tt>application.ini</tt>:</p>
+
+<code><pre>
+resources.view.helperPath.Frn_View_Helper = /path/to/Frn/View/Helper
+</pre></code>
+
+<p>to get it to output anything you'll need to echo the frontal helper at the bottom of the page:</p>
+
+<code><pre>
+...
+&lt;?= $this->frontal() ?&gt;
+&lt;/body&gt;
+</pre></code>
+
+<p>By default this will echo nothing! Don't panic, it'll start doing things once you've loaded some stuff into it.  The main use-case here is that you're echoing the helper out in some sort of template (Zend_Layout particularly) but pushing configuration into it from your individual views.</p>
+
+<p>Firstly, you can override the path Frontal will use, for instance if there's a page appears under lots of different URLs but you just want one rule that matches it against '/foo':</p>
+
+<code><pre>
+&lt;? $this->frontal->location('/foo'); ?&gt;
+
+will output:
+
+&lt;script&gt;
+$frn.location('/foo');
+&lt;/script&gt;
+</pre></code>
+
+<p>Secondly, you can provide some data that frontal might find useful (rather than dump it in global scope).  The data is auto-converted to JSON so it's a fairly nice way of feeding data from PHP to JS:</p>
+
+<code><pre>
+&lt;? $this->frontal->data(array('foo', 'bar')); ?&gt;
+
+will output:
+
+&lt;script&gt;
+$frn.data(["foo","bar"]);
+&lt;/script&gt;
+</pre></code>
+
+<p>That's pretty much it for now, but it works pretty well and I'm going to be building it into a work project.</p>
+]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Clarifying Javascript-PHP communication using JSON-RPC]]></title>
+            <link href="/clarifying-javascript-php-communication-using-json-rpc"/>
+            <updated>2010-03-15T00:00:00+00:00</updated>
+            <id>/clarifying-javascript-php-communication-using-json-rpc</id>
+            <content type="html"><![CDATA[<p>I think of myself first and foremost as a PHP developer but serious sites are getting more and more JS-heavy as time goes on so it gets harder (and less pragmatic) to try and avoid dealing with JS<->PHP communication of some sort.</p>
+
+<p>I'm a big advocate of RESTful design so tend to end up attempting to write scripts that do lots of GETs and POSTs (as appropriate) and parsing out whatever custom response format I've decided JSON requests will return.  It feels good - like I'm sticking to my principles and 'doing it right' but it's a long painful slog that can feel like self-flagellation at times.</p>
+
+<p>It's also slow and hard to prototype - it's hard to argue in favour of some abstract design idea when it's making you take forever to generate simple tasks .  Sometimes when I feel lazy what I really want is a way of calling my PHP objects directly from the JS and not worrying about what's happening in the underlying HTTP, and that's what <a href="http://json-rpc.org">JSON-RPC</a> provides.</p>
+
+<p>In this blog I'll be showing some simple examples of JSON-RPC in action but first let's look at the pros and cons.</p>
+
+<h4>Why JSON-RPC is awesome:</h4>
+
+<ul>
+<li>It includes basic error handling as part of the protocol</li>
+<li>It hides away all the client-server communications from me the developer</li>
+<li>It looks a bit like SOAP so is fairly familiar</li>
+<li>I don't have to spend time writing RESTful response formats and pondering URLs to get working code</li>
+</ul>
+
+<h4>Why JSON-RPC sucks:</h4>
+
+<ul>
+<li>It's not <a href="http://en.wikipedia.org/wiki/Rest">REST</a>ful - requests from the client come in as POSTs to on URL without a clear semantic 'resource' behind it</li>
+<li>There may be specifics to the HTTP that aren't covered by the abstraction</li>
+</ul>
+
+<p>I suspect a lot of developers reading the lists above will be thinking "hell yeah, sounds good, how can I have it?"</p>
+
+<h4>The protocol</h4>
+
+<p>I won't go into all the ins and outs of the protocol but it's worth taking a quick look.  The basic paradigm is that the server has a bunch of methods that can be called by the client, that take different parameters.</p>
+
+<p>An example request is a POST to the server that looks like this:</p>
+
+<p><tt>{ "method": "greet", "params": ["Ciaran"], "id": 1234 }</tt></p>
+
+<p>This is the PHP equivalent of $server->greet("Ciaran").  The ID parameter is used to match up requests and responses.  The response would look like this:</p>
+
+<p><tt>{ "result": "Hello Ciaran", "error": null, "id": 1234 }</tt></p>
+
+<p>So the result is a string literal with no error conditions - there's not much more to it than that to be honest, aside from error handling.</p>
+
+<p>It would be fairly simple to implement either side of the protocol yourself on a project, but the real strength is of course that once something is a standard, the rest of the world goes to work on it and starts writing up libraries that lazy programmers like us can use! Let's take a look at two libraries, a Zend Framework one on the PHP end and a jQuery one on the Javascript end.</p>
+
+<h4>JSON-RPC in PHP: Zend_Json_Server</h4>
+
+<p><a href="http://framework.zend.com/manual/en/zend.json.server.html">Zend_Json_Server</a> is pretty simple to use, you will need a class that exposes and handles the methods you're going to be using that's properly docblock commented (this is used by the component to see the parameter and return types):</p>
+
+<code><pre>class My_Service_Handler
+{
+    /**
+    * @param string $name
+    * @return string
+    */
+    public function greet($name)
+    {
+        return "Hello $name";
+    }
+}
+</code></pre>
+
+<p>You can then proxy JSON-RPC requests along into this object using the Zend Framework component, Zend_Json_Server:</p>
+
+<code><pre>
+$server = new Zend_Json_Server();
+$server->setClass('My_Service_Handler');
+$server->handle();
+</pre></code>
+
+<p>Now any requests like our examples above will get an appropriate response.  Again fairly straightforward stuff I think, and should be familiar to anyone who's used a SOAP server in PHP.  All of the complexity of decoding the response and encoding the request is handled by the component.</p>
+
+<h4>JSON-RPC in JQuery: zendjsonrpc</h4>
+
+<p>There are a huge number of jQuery plugins to do JSON-RPC, but <a href="http://plugins.jquery.com/project/zendjsonrpc">this one is specifically written to work with the Zend_Json_Server</a> so I figured it's as good an example as any.  If you look at the source code of the plugin it's fairly straightforward and I'm sure it'd be easy to write your own if you preferred.  The basic usage is:</p>
+
+<code><pre>
+var client = jQuery.Zend.jsonrpc({url: '/path/to/service/handler.php'});
+var message = client.greet("Ciaran");
+alert(message);
+</pre></code>
+
+<p>As you can see, once the client object is constructed with the service URL you as a developer have a local JS object that exposes the exact same methods the My_Service_Handler has.</p>
+
+<h4>Overall</h4>
+
+<p>What I really find attractive about the JSON-RPC protocol is that, well, someone else has implemented it for me in the two components above.  That means that I can stop worrying about AJAX and start pretending that my PHP object is somehow present locally in my JS and that I can just call its methods at will.</p>
+
+<p>That's a really powerful abstraction. No doubt like most abstractions there are places where it leaks around the edges but the simplicity of the idea and the clarity it brings to JS<->PHP communication make it an approach I'll be certainly investigating for my next JS-heavy project.</p>
+]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Why you should close PHP sessions as soon as you can]]></title>
+            <link href="/why-you-should-close-php-sessions-as-soon-as-you-can"/>
+            <updated>2009-12-23T00:00:00+00:00</updated>
+            <id>/why-you-should-close-php-sessions-as-soon-as-you-can</id>
+            <content type="html"><![CDATA[<p>When serving files with PHP, you may notice a curious effect where only one request gets served at a time per user.</p>
+
+<p>You can see it if you're the kind of retro throwback who uses framesets served via PHP - the panels will load in one at a time.  You'll see the same thing if you generate a load of images via PHP - they'll pop up sequentially - and if you serve large video files via PHP like we do at work you may see a curious effect of the downloads queueing up.  Those of you with AJAX applications may be victim to this without realising, but if you're serving JSON/XML responses from PHP scripts you'll find that your parallel AJAX requests will only get served one at a time.</p>
+
+<p>I've seen this effect a few times and always ended up working around it.  The odd thing is this isn't a setting in Apache or a global slowdown of your server. PHP just refuses to serve more than one request per user at a time.  Luckily <a href="http://twitter.com/kevindmorgan" rel="friend">Kevin</a> managed to spot the reason, and it was a new one on me even after 9+ years of using PHP (it's possible everyone else knows about it, mind you).</p>
+
+<p>The answer is pretty simple: <strong>PHP can only handle one response at a time if you have an open session</strong>.</p>
+
+<p>This makes perfect sense when you think about it - when you <tt>session_start()</tt> PHP has to read the data out of the session, then at the end of your script it has to write the data back - if this was happening in parallel then you'd have classic race conditions.  To handle this PHP locks the session on <tt>session_start()</tt> and other pending requests will block until the lock is released.</p>
+
+<p>This leads to some guidelines:</p>
+
+<ol>
+<li>Don't start sessions with <tt>session_start()</tt> until you need them (but remember you have to start them before your script output begins).   This would also imply not using session.autostart if you can avoid it.</li>
+<li>When serving files via PHP, consider serving them from a different domain so the sessions don't overlap.</li>
+<li>End your sessions as soon as you can.  By calling <tt>session_write_close()</tt> you can release your session lock, so as soon as you know your script won't need to write any more to the session, call it.</li>
+</ol>
+
+<p>Hopefully this will help out somebody in a similar situation in future!</p>
+]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Doctrine article in php|architect]]></title>
+            <link href="/doctrine-article-in-php-architect"/>
+            <updated>2009-08-27T00:00:00+01:00</updated>
+            <id>/doctrine-article-in-php-architect</id>
+            <content type="html"><![CDATA[<p>Ah, fame at last!</p>
+<div>
+ <div class="figure narrow">
+    <a href="http://phparch.com/c/phpa/magazine/index"><img src="http://static.phparch.com/common/issues/small/0104.jpg" width="200" height="258" alt="Cover of php|architect"/></a>
+    <p class="caption">The latest issue</p>
+</div>
+
+<p>It looks like <a href="http://phparch.com/c/phpa/magazine/index">the new issue of php|architect</a> is out, and contains my article about <a href="http://www.doctrine-project.org/documentation">Doctrine</a>, the PHP-based Object Relational Mapper.</p>
+
+<p>It feels like ages since I wrote it (I'm no longer a 'freelance PHP developer' for a start) so re-reading it was actually a slightly weird experience.</p>
+</div>
+<p>It's my first published work, and I'm fairly happy with it.  Hopefully I'll get another chance to write for php|architect, I just need to think of another subject that I have something to say about.</p>
+
+<p>The bad news for most of you cheapskates is that php|architect is a subscription-only publication so you can't read my article for free!  However, I would genuinely recommend the magazine, especially as it's only effectively $2.50/issue.  Obviously I wouldn't recommend it for people who aren't interested in PHP, however!</p>]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Using Twitter as a voting platform]]></title>
+            <link href="/using-twitter-as-a-voting-platform"/>
+            <updated>2009-06-15T00:00:00+01:00</updated>
+            <id>/using-twitter-as-a-voting-platform</id>
+            <content type="html"><![CDATA[<div class="figure narrow">
+<a href="http://www.flickr.com/photos/ciaranmcnulty/3627788423/" title="Cast of Star Trek by CiaranJMcNulty, on Flickr"><img src="http://farm4.static.flickr.com/3406/3627788423_c757c36050_m.jpg" width="240" height="160" alt="Cast of Star Trek" /></a>
+</div>
+
+<p>Like a lot of other people, I've had a love/hate relationship with <a href="http://twitter.com">Twitter</a>.  At first I didn't see the point - it was just <a href="http://facebook.com">Facebook</a> without the features, then I drank the kool-aid, and fell in love with its simplicity and openness.  Nowadays I've backed off a bit and see it as an interesting social phenomenon that I enjoy being a part of. I'd been meaning to check out the <a href="http://framework.zend.com/manual/en/zend.service.twitter.html">Zend_Service_Twitter</a> PHP library for a while, but hadn't really thought of an excuse.</p>
+
+<p>  A few weeks back I was unlucky enough to watch Star Trek V and <a href="http://twitter.com/CiaranMcNulty/status/1981914567">tweeted about how crap it was</a>, despite my friend Nick thinking it's the best of the lot. There was a bit of back and forth, so I posted an order for the films, from best to worst.  A few of my friends then did the same, with the hashtag of #startrekrank as a way of identifying the posts.</p>
+
+<p>It struck me that I could somehow aggregate these results using the Twitter API, so I present to you, <a href="http://startrekrank.com/">StarTrekRank.com</a>!</p>
+
+<p>Actually building the site was pretty straightforward.  The Twitter API combined with the Zend library make it pretty simple to perform searches.  I'm generating the rankings using the <a href="http://en.wikipedia.org/wiki/Condorcet_method#Kemeny-Young_method">Kemeny-Young method</a>, which is fairly processor-intensive - I suspect it's O(n!) for the number of movies - but to my mind produces very fair results.</p>
+
+<p>The way the site operates is to periodically search for #startrekrank via the API, and index any new tweets.  Then if there are some new tweets, the overall ranking is re-calculated automatically.  Finally, the new tweeters get a message sent @them from <a href="http://twitter.com/startrekrank">the 'startrekrank' twitter account</a> thanking them and directing them back to the main site to view the results.</p>
+
+<p>As a voting platform, Twitter is pretty efficient - voters are authenticated via their Twitter account so you know who the votes have come from.  It's only real downside is that a secret ballot isn't very practical. Now clearly this is all just a bit of fluff, but to me it's an interesting illustration of how Twitter's openness and simplicity allow more complex applications to be built on top of it. </p>]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Simplify pagination logic using a custom Zend_Paginator_Adapter]]></title>
+            <link href="/Simplify-pagination-logic-using-a-custom-zend-paginator-adapter"/>
+            <updated>2009-06-13T00:00:00+01:00</updated>
+            <id>/Simplify-pagination-logic-using-a-custom-zend-paginator-adapter</id>
+            <content type="html"><![CDATA[<p>Pagination logic is something that I've found myself redoing a number of times over the years, and each time it's been a relatively fiddly and painful process.</p>
+
+<p>This time around I decided to check out the <a href="http://framework.zend.com/manual/en/zend.paginator.html">Zend_Paginator</a> component from the Zend Framework, and found the process useful enough to share!  In my case I was using Doctrine to retrieve data from the database.  I'll skip most of the Doctrine-specific stuff, however, as hopefully this will end up as a decent example of how to integrate Paginator with other non-Zend libraries.</p>
+
+<p>When the Paginator is instanced, it's given an instance of an appropriate Adapter and told what the current page is:</p>
+
+<div class="php">
+<p><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br />$paginator&nbsp;</span><span style="color: #007700">=&nbsp;&nbsp;new&nbsp;</span><span style="color: #0000BB">Zend_Paginator</span><span style="color: #007700">(</span><span style="color: #0000BB">$adapter</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">$paginator</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">setItemCountPerPage</span><span style="color: #007700">(</span><span style="color: #0000BB">20</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">$paginator</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">setCurrentPageNumber</span><span style="color: #007700">(</span><span style="color: #0000BB">2</span><span style="color: #007700">);<br /></span>
+</span>
+</code></p>
+</div>
+
+<p>It can then be used in a View using the <a href="http://framework.zend.com/manual/en/zend.paginator.usage.html#zend.paginator.rendering">Paginator View Helper</a>:</p>
+
+<div class="php">
+<p><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br /></span><span style="color: #007700">echo&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">paginationControl</span><span style="color: #007700">(<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000BB">$paginator</span><span style="color: #007700">,&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #DD0000">'All'</span><span style="color: #007700">,&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #DD0000">'my_pagination_control.phtml'<br /></span><span style="color: #007700">);<br /></span>
+</span>
+</code></p>
+</div>
+
+<p>The view helper is given an instance of the paginator, a pagination style, and a view script to use to render the pagination.  Zend give a few <a href="http://framework.zend.com/manual/en/zend.paginator.usage.html#zend.paginator.usage.rendering.example-controls">example view scripts</a> in their documentation.  They're fairly simple in that they access a straightforward API to see which page would be next, previous, and which pages are in the current range.</p>
+
+<p>So, what I needed to do was write an Adapter to work with Doctrine queries. I wanted it to take a query as a parameter and then paginate across the set of results.  This turned out to be pretty simple - the Zend_Paginator_Adapter_Interface that I needed to implement only had 2 methods, count() and getItems().  The finished Adapter looks like this:</p>
+
+<div class="php">
+<p><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br /></span><span style="color: #007700">class&nbsp;</span><span style="color: #0000BB">My_Paginator_Adapter_DoctrineQuery&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #007700">implements&nbsp;</span><span style="color: #0000BB">Zend_Paginator_Adapter_Interface<br /></span><span style="color: #007700">{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;protected&nbsp;</span><span style="color: #0000BB">$_query</span><span style="color: #007700">;<br />&nbsp;&nbsp;&nbsp;&nbsp;protected&nbsp;</span><span style="color: #0000BB">$_count_query</span><span style="color: #007700">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000BB">__construct</span><span style="color: #007700">(</span><span style="color: #0000BB">$query</span><span style="color: #007700">)<br />&nbsp;&nbsp;&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">_query&nbsp;</span><span style="color: #007700">=&nbsp;</span><span style="color: #0000BB">$query</span><span style="color: #007700">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">_count_query&nbsp;</span><span style="color: #007700">=&nbsp;clone&nbsp;</span><span style="color: #0000BB">$query</span><span style="color: #007700">;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000BB">getItems</span><span style="color: #007700">(</span><span style="color: #0000BB">$offset</span><span style="color: #007700">,&nbsp;</span><span style="color: #0000BB">$itemsPerPage</span><span style="color: #007700">)<br />&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">_query<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">limit</span><span style="color: #007700">(</span><span style="color: #0000BB">$itemsPerPage</span><span style="color: #007700">)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;</span><span style="color: #0000BB">offset</span><span style="color: #007700">(</span><span style="color: #0000BB">$offset</span><span style="color: #007700">)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;</span><span style="color: #0000BB">execute</span><span style="color: #007700">();<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000BB">count</span><span style="color: #007700">()<br />&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">_count_query</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">count</span><span style="color: #007700">();<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />}<br /></span>
+</span>
+</code></p>
+</div>
+
+<p>The count() method of course just returns the total results the query would return if run without constraints, while the getItems() method returns the items on the specified page.</p>
+
+<p>Putting it all together, the code in my Action looks like this:</p>
+
+
+<div class="php">
+<p><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br />$query&nbsp;</span><span style="color: #007700">=&nbsp;</span><span style="color: #0000BB">Doctrine_Query</span><span style="color: #007700">::</span><span style="color: #0000BB">create</span><span style="color: #007700">()<br />&nbsp;&nbsp;&nbsp;&nbsp;-&gt;</span><span style="color: #0000BB">from</span><span style="color: #007700">(</span><span style="color: #DD0000">'SomeTable'</span><span style="color: #007700">)<br />&nbsp;&nbsp;&nbsp;&nbsp;-&gt;</span><span style="color: #0000BB">where</span><span style="color: #007700">(</span><span style="color: #DD0000">'someField&nbsp;=&nbsp;?'</span><span style="color: #007700">,&nbsp;</span><span style="color: #0000BB">12</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">$adapter&nbsp;</span><span style="color: #007700">=&nbsp;new&nbsp;</span><span style="color: #0000BB">My_Paginator_Adapter_DoctrineQuery</span><span style="color: #007700">(</span><span style="color: #0000BB">$query</span><span style="color: #007700">);<br /><br /></span><span style="color: #0000BB">$paginator&nbsp;</span><span style="color: #007700">=&nbsp;&nbsp;new&nbsp;</span><span style="color: #0000BB">Zend_Paginator</span><span style="color: #007700">(<br />&nbsp;&nbsp;&nbsp;&nbsp;new&nbsp;</span><span style="color: #0000BB">My_Paginator_Adapter_DoctrineQuery</span><span style="color: #007700">(</span><span style="color: #0000BB">$query</span><span style="color: #007700">));<br /></span><span style="color: #0000BB">$paginator</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">setItemCountPerPage</span><span style="color: #007700">(</span><span style="color: #0000BB">20</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">$paginator</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">setCurrentPage</span><span style="color: #007700">(</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">_request</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">getParam</span><span style="color: #007700">(</span><span style="color: #DD0000">'page'</span><span style="color: #007700">));<br /><br /></span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">view</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">paginator&nbsp;</span><span style="color: #007700">=&nbsp;</span><span style="color: #0000BB">$paginator</span><span style="color: #007700">;<br /></span>
+</span>
+</code></p>
+</div>
+
+<p>In the view I use the paginator to render out the pagination widget, but also for the view to obtain the objects it wants:</p>
+
+<div class="php">
+<p><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br /></span><span style="color: #007700">echo&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">paginationControl</span><span style="color: #007700">(</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">paginator</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'All'</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'my_pagination.phtml'</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">$items&nbsp;</span><span style="color: #007700">=&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">paginator</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">getCurrentPageItems</span><span style="color: #007700">();<br />foreach(</span><span style="color: #0000BB">$items&nbsp;</span><span style="color: #007700">as&nbsp;</span><span style="color: #0000BB">$item</span><span style="color: #007700">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF8000">//&nbsp;...<br /></span><span style="color: #007700">}<br /></span>
+</span>
+</code></p>
+</div>
+
+<p>And a very simplified pagination partial would look like this:</p>
+
+<div class="php">
+<p><code><span style="color: #000000">
+<br /><span style="color: #0000BB">&lt;?php&nbsp;</span><span style="color: #007700">if&nbsp;(isset(</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">previous</span><span style="color: #007700">)){&nbsp;</span><span style="color: #0000BB">?&gt;<br /></span>&nbsp;&nbsp;&lt;a&nbsp;href="<span style="color: #0000BB">&lt;?php&nbsp;</span><span style="color: #007700">echo&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">url</span><span style="color: #007700">(array(</span><span style="color: #DD0000">'page'&nbsp;</span><span style="color: #007700">=&gt;&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">previous</span><span style="color: #007700">));&nbsp;</span><span style="color: #0000BB">?&gt;</span>"&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;prev<br />&nbsp;&nbsp;&lt;/a&gt;<br /><span style="color: #0000BB">&lt;?php&nbsp;</span><span style="color: #007700">}&nbsp;</span><span style="color: #0000BB">?&gt;<br />&lt;?php&nbsp;</span><span style="color: #007700">foreach&nbsp;(</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">pagesInRange&nbsp;</span><span style="color: #007700">as&nbsp;</span><span style="color: #0000BB">$page</span><span style="color: #007700">){&nbsp;</span><span style="color: #0000BB">?&gt;<br /></span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;a&nbsp;href="<span style="color: #0000BB">&lt;?php&nbsp;</span><span style="color: #007700">echo&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">url</span><span style="color: #007700">(array(</span><span style="color: #DD0000">'page'&nbsp;</span><span style="color: #007700">=&gt;&nbsp;</span><span style="color: #0000BB">$page</span><span style="color: #007700">));&nbsp;</span><span style="color: #0000BB">?&gt;</span>"&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #0000BB">&lt;?php&nbsp;</span><span style="color: #007700">echo&nbsp;</span><span style="color: #0000BB">$page</span><span style="color: #007700">;&nbsp;</span><span style="color: #0000BB">?&gt;<br /></span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/a&gt;&nbsp;<br /><span style="color: #0000BB">&lt;?php&nbsp;</span><span style="color: #007700">}&nbsp;</span><span style="color: #0000BB">?&gt;<br />&lt;?php&nbsp;</span><span style="color: #007700">if&nbsp;(isset(</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">next</span><span style="color: #007700">)){&nbsp;</span><span style="color: #0000BB">?&gt;<br /></span>&nbsp;&nbsp;&lt;a&nbsp;href="<span style="color: #0000BB">&lt;?php&nbsp;</span><span style="color: #007700">echo&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">url</span><span style="color: #007700">(array(</span><span style="color: #DD0000">'page'&nbsp;</span><span style="color: #007700">=&gt;&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">next</span><span style="color: #007700">));&nbsp;</span><span style="color: #0000BB">?&gt;</span>"&gt;<br />&nbsp;&nbsp;next<br />&nbsp;&nbsp;&lt;/a&gt;<br /><span style="color: #0000BB">&lt;?php&nbsp;</span><span style="color: #007700">}&nbsp;</span><span style="color: #0000BB">?&gt;<br /></span>
+</span>
+</code></p>
+</div>
+
+<p>Overall I like this way of working, and certainly it was easier to make a new Adapter than I'd feared.  One future possibility is of making individual adaptors for specific queries, as a way of removing the query logic from my contoller.</p>]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Article in php|architect (maybe)]]></title>
+            <link href="/article-in-php-architect-maybe"/>
+            <updated>2009-05-26T00:00:00+01:00</updated>
+            <id>/article-in-php-architect-maybe</id>
+            <content type="html"><![CDATA[<p>Sorry for the lack of recent posts - I've been distracted recently working on an article I've written for <a href="http://www.phparch.com/">php|architect</a>.</p>
+
+<p>In theory it'll be in the August issue but these things are subject to change and frankly they could probably still reject it if they wanted to.</p>
+
+<p>Anyway there's still time to subscribe if you want to get a copy!</p>]]></content>
+        </entry>
+    </feed>

@@ -1,40 +1,99 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-    <title>Tag Archive "doctrine" &mdash; Ciaran McNulty</title>
-    <!--[if lt IE 9]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <meta name="viewport" content="width=device-width" />
-    <link rel="stylesheet" href="/main.css?v=1" />
-    <!--[if gt IE 7]><!-->
-    <link rel="stylesheet" href="/layout.css?v=1" />
-    <!--<![endif]-->
-    <link rel="openid.server" href="http://www.livejournal.com/openid/server.bml" />
-    <link rel="openid.delegate" href="http://ciaranmcnulty.livejournal.com" />
-</head>
-<body>
-
-    <header>
-        <h1><a href="/">Ciaran McNulty</a></h1>
-    </header>
-
-        <section id="blog">
-        <h2>"doctrine"</h2>
-        <h3>August 2009</h3>
-<article>
-  <div><a href="/doctrine-article-in-php-architect">Doctrine article in php|architect</a></div>
-</article>
-    <h3>June 2009</h3>
-<article>
-  <div><a href="/Simplify-pagination-logic-using-a-custom-zend-paginator-adapter">Simplify pagination logic using a custom Zend_Paginator_Adapter</a></div>
-</article>
-
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title><![CDATA[Ciaran McNulty]]></title>
+    <link href="/blog/tags/doctrine" rel="self"/>
+    <link href="/"/>
+    <updated>2015-07-05T16:59:03+01:00</updated>
+    <id>/</id>
+        <generator uri="http://sculpin.io/">Sculpin</generator>
+            <entry>
+            <title type="html"><![CDATA[Doctrine article in php|architect]]></title>
+            <link href="/doctrine-article-in-php-architect"/>
+            <updated>2009-08-27T00:00:00+01:00</updated>
+            <id>/doctrine-article-in-php-architect</id>
+            <content type="html"><![CDATA[<p>Ah, fame at last!</p>
 <div>
+ <div class="figure narrow">
+    <a href="http://phparch.com/c/phpa/magazine/index"><img src="http://static.phparch.com/common/issues/small/0104.jpg" width="200" height="258" alt="Cover of php|architect"/></a>
+    <p class="caption">The latest issue</p>
 </div>
-    </section>
-    
-</body>
 
-</html>
+<p>It looks like <a href="http://phparch.com/c/phpa/magazine/index">the new issue of php|architect</a> is out, and contains my article about <a href="http://www.doctrine-project.org/documentation">Doctrine</a>, the PHP-based Object Relational Mapper.</p>
+
+<p>It feels like ages since I wrote it (I'm no longer a 'freelance PHP developer' for a start) so re-reading it was actually a slightly weird experience.</p>
+</div>
+<p>It's my first published work, and I'm fairly happy with it.  Hopefully I'll get another chance to write for php|architect, I just need to think of another subject that I have something to say about.</p>
+
+<p>The bad news for most of you cheapskates is that php|architect is a subscription-only publication so you can't read my article for free!  However, I would genuinely recommend the magazine, especially as it's only effectively $2.50/issue.  Obviously I wouldn't recommend it for people who aren't interested in PHP, however!</p>]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Simplify pagination logic using a custom Zend_Paginator_Adapter]]></title>
+            <link href="/Simplify-pagination-logic-using-a-custom-zend-paginator-adapter"/>
+            <updated>2009-06-13T00:00:00+01:00</updated>
+            <id>/Simplify-pagination-logic-using-a-custom-zend-paginator-adapter</id>
+            <content type="html"><![CDATA[<p>Pagination logic is something that I've found myself redoing a number of times over the years, and each time it's been a relatively fiddly and painful process.</p>
+
+<p>This time around I decided to check out the <a href="http://framework.zend.com/manual/en/zend.paginator.html">Zend_Paginator</a> component from the Zend Framework, and found the process useful enough to share!  In my case I was using Doctrine to retrieve data from the database.  I'll skip most of the Doctrine-specific stuff, however, as hopefully this will end up as a decent example of how to integrate Paginator with other non-Zend libraries.</p>
+
+<p>When the Paginator is instanced, it's given an instance of an appropriate Adapter and told what the current page is:</p>
+
+<div class="php">
+<p><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br />$paginator&nbsp;</span><span style="color: #007700">=&nbsp;&nbsp;new&nbsp;</span><span style="color: #0000BB">Zend_Paginator</span><span style="color: #007700">(</span><span style="color: #0000BB">$adapter</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">$paginator</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">setItemCountPerPage</span><span style="color: #007700">(</span><span style="color: #0000BB">20</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">$paginator</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">setCurrentPageNumber</span><span style="color: #007700">(</span><span style="color: #0000BB">2</span><span style="color: #007700">);<br /></span>
+</span>
+</code></p>
+</div>
+
+<p>It can then be used in a View using the <a href="http://framework.zend.com/manual/en/zend.paginator.usage.html#zend.paginator.rendering">Paginator View Helper</a>:</p>
+
+<div class="php">
+<p><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br /></span><span style="color: #007700">echo&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">paginationControl</span><span style="color: #007700">(<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000BB">$paginator</span><span style="color: #007700">,&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #DD0000">'All'</span><span style="color: #007700">,&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #DD0000">'my_pagination_control.phtml'<br /></span><span style="color: #007700">);<br /></span>
+</span>
+</code></p>
+</div>
+
+<p>The view helper is given an instance of the paginator, a pagination style, and a view script to use to render the pagination.  Zend give a few <a href="http://framework.zend.com/manual/en/zend.paginator.usage.html#zend.paginator.usage.rendering.example-controls">example view scripts</a> in their documentation.  They're fairly simple in that they access a straightforward API to see which page would be next, previous, and which pages are in the current range.</p>
+
+<p>So, what I needed to do was write an Adapter to work with Doctrine queries. I wanted it to take a query as a parameter and then paginate across the set of results.  This turned out to be pretty simple - the Zend_Paginator_Adapter_Interface that I needed to implement only had 2 methods, count() and getItems().  The finished Adapter looks like this:</p>
+
+<div class="php">
+<p><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br /></span><span style="color: #007700">class&nbsp;</span><span style="color: #0000BB">My_Paginator_Adapter_DoctrineQuery&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #007700">implements&nbsp;</span><span style="color: #0000BB">Zend_Paginator_Adapter_Interface<br /></span><span style="color: #007700">{<br /><br />&nbsp;&nbsp;&nbsp;&nbsp;protected&nbsp;</span><span style="color: #0000BB">$_query</span><span style="color: #007700">;<br />&nbsp;&nbsp;&nbsp;&nbsp;protected&nbsp;</span><span style="color: #0000BB">$_count_query</span><span style="color: #007700">;<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000BB">__construct</span><span style="color: #007700">(</span><span style="color: #0000BB">$query</span><span style="color: #007700">)<br />&nbsp;&nbsp;&nbsp;&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">_query&nbsp;</span><span style="color: #007700">=&nbsp;</span><span style="color: #0000BB">$query</span><span style="color: #007700">;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">_count_query&nbsp;</span><span style="color: #007700">=&nbsp;clone&nbsp;</span><span style="color: #0000BB">$query</span><span style="color: #007700">;<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000BB">getItems</span><span style="color: #007700">(</span><span style="color: #0000BB">$offset</span><span style="color: #007700">,&nbsp;</span><span style="color: #0000BB">$itemsPerPage</span><span style="color: #007700">)<br />&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">_query<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">limit</span><span style="color: #007700">(</span><span style="color: #0000BB">$itemsPerPage</span><span style="color: #007700">)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;</span><span style="color: #0000BB">offset</span><span style="color: #007700">(</span><span style="color: #0000BB">$offset</span><span style="color: #007700">)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&gt;</span><span style="color: #0000BB">execute</span><span style="color: #007700">();<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;function&nbsp;</span><span style="color: #0000BB">count</span><span style="color: #007700">()<br />&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">_count_query</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">count</span><span style="color: #007700">();<br />&nbsp;&nbsp;&nbsp;&nbsp;}<br />&nbsp;&nbsp;&nbsp;&nbsp;<br />}<br /></span>
+</span>
+</code></p>
+</div>
+
+<p>The count() method of course just returns the total results the query would return if run without constraints, while the getItems() method returns the items on the specified page.</p>
+
+<p>Putting it all together, the code in my Action looks like this:</p>
+
+
+<div class="php">
+<p><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br />$query&nbsp;</span><span style="color: #007700">=&nbsp;</span><span style="color: #0000BB">Doctrine_Query</span><span style="color: #007700">::</span><span style="color: #0000BB">create</span><span style="color: #007700">()<br />&nbsp;&nbsp;&nbsp;&nbsp;-&gt;</span><span style="color: #0000BB">from</span><span style="color: #007700">(</span><span style="color: #DD0000">'SomeTable'</span><span style="color: #007700">)<br />&nbsp;&nbsp;&nbsp;&nbsp;-&gt;</span><span style="color: #0000BB">where</span><span style="color: #007700">(</span><span style="color: #DD0000">'someField&nbsp;=&nbsp;?'</span><span style="color: #007700">,&nbsp;</span><span style="color: #0000BB">12</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">$adapter&nbsp;</span><span style="color: #007700">=&nbsp;new&nbsp;</span><span style="color: #0000BB">My_Paginator_Adapter_DoctrineQuery</span><span style="color: #007700">(</span><span style="color: #0000BB">$query</span><span style="color: #007700">);<br /><br /></span><span style="color: #0000BB">$paginator&nbsp;</span><span style="color: #007700">=&nbsp;&nbsp;new&nbsp;</span><span style="color: #0000BB">Zend_Paginator</span><span style="color: #007700">(<br />&nbsp;&nbsp;&nbsp;&nbsp;new&nbsp;</span><span style="color: #0000BB">My_Paginator_Adapter_DoctrineQuery</span><span style="color: #007700">(</span><span style="color: #0000BB">$query</span><span style="color: #007700">));<br /></span><span style="color: #0000BB">$paginator</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">setItemCountPerPage</span><span style="color: #007700">(</span><span style="color: #0000BB">20</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">$paginator</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">setCurrentPage</span><span style="color: #007700">(</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">_request</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">getParam</span><span style="color: #007700">(</span><span style="color: #DD0000">'page'</span><span style="color: #007700">));<br /><br /></span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">view</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">paginator&nbsp;</span><span style="color: #007700">=&nbsp;</span><span style="color: #0000BB">$paginator</span><span style="color: #007700">;<br /></span>
+</span>
+</code></p>
+</div>
+
+<p>In the view I use the paginator to render out the pagination widget, but also for the view to obtain the objects it wants:</p>
+
+<div class="php">
+<p><code><span style="color: #000000">
+<span style="color: #0000BB">&lt;?php<br /></span><span style="color: #007700">echo&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">paginationControl</span><span style="color: #007700">(</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">paginator</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'All'</span><span style="color: #007700">,&nbsp;</span><span style="color: #DD0000">'my_pagination.phtml'</span><span style="color: #007700">);<br /></span><span style="color: #0000BB">$items&nbsp;</span><span style="color: #007700">=&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">paginator</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">getCurrentPageItems</span><span style="color: #007700">();<br />foreach(</span><span style="color: #0000BB">$items&nbsp;</span><span style="color: #007700">as&nbsp;</span><span style="color: #0000BB">$item</span><span style="color: #007700">)&nbsp;{<br />&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="color: #FF8000">//&nbsp;...<br /></span><span style="color: #007700">}<br /></span>
+</span>
+</code></p>
+</div>
+
+<p>And a very simplified pagination partial would look like this:</p>
+
+<div class="php">
+<p><code><span style="color: #000000">
+<br /><span style="color: #0000BB">&lt;?php&nbsp;</span><span style="color: #007700">if&nbsp;(isset(</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">previous</span><span style="color: #007700">)){&nbsp;</span><span style="color: #0000BB">?&gt;<br /></span>&nbsp;&nbsp;&lt;a&nbsp;href="<span style="color: #0000BB">&lt;?php&nbsp;</span><span style="color: #007700">echo&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">url</span><span style="color: #007700">(array(</span><span style="color: #DD0000">'page'&nbsp;</span><span style="color: #007700">=&gt;&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">previous</span><span style="color: #007700">));&nbsp;</span><span style="color: #0000BB">?&gt;</span>"&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;prev<br />&nbsp;&nbsp;&lt;/a&gt;<br /><span style="color: #0000BB">&lt;?php&nbsp;</span><span style="color: #007700">}&nbsp;</span><span style="color: #0000BB">?&gt;<br />&lt;?php&nbsp;</span><span style="color: #007700">foreach&nbsp;(</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">pagesInRange&nbsp;</span><span style="color: #007700">as&nbsp;</span><span style="color: #0000BB">$page</span><span style="color: #007700">){&nbsp;</span><span style="color: #0000BB">?&gt;<br /></span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;a&nbsp;href="<span style="color: #0000BB">&lt;?php&nbsp;</span><span style="color: #007700">echo&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">url</span><span style="color: #007700">(array(</span><span style="color: #DD0000">'page'&nbsp;</span><span style="color: #007700">=&gt;&nbsp;</span><span style="color: #0000BB">$page</span><span style="color: #007700">));&nbsp;</span><span style="color: #0000BB">?&gt;</span>"&gt;<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #0000BB">&lt;?php&nbsp;</span><span style="color: #007700">echo&nbsp;</span><span style="color: #0000BB">$page</span><span style="color: #007700">;&nbsp;</span><span style="color: #0000BB">?&gt;<br /></span>&nbsp;&nbsp;&nbsp;&nbsp;&lt;/a&gt;&nbsp;<br /><span style="color: #0000BB">&lt;?php&nbsp;</span><span style="color: #007700">}&nbsp;</span><span style="color: #0000BB">?&gt;<br />&lt;?php&nbsp;</span><span style="color: #007700">if&nbsp;(isset(</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">next</span><span style="color: #007700">)){&nbsp;</span><span style="color: #0000BB">?&gt;<br /></span>&nbsp;&nbsp;&lt;a&nbsp;href="<span style="color: #0000BB">&lt;?php&nbsp;</span><span style="color: #007700">echo&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">url</span><span style="color: #007700">(array(</span><span style="color: #DD0000">'page'&nbsp;</span><span style="color: #007700">=&gt;&nbsp;</span><span style="color: #0000BB">$this</span><span style="color: #007700">-&gt;</span><span style="color: #0000BB">next</span><span style="color: #007700">));&nbsp;</span><span style="color: #0000BB">?&gt;</span>"&gt;<br />&nbsp;&nbsp;next<br />&nbsp;&nbsp;&lt;/a&gt;<br /><span style="color: #0000BB">&lt;?php&nbsp;</span><span style="color: #007700">}&nbsp;</span><span style="color: #0000BB">?&gt;<br /></span>
+</span>
+</code></p>
+</div>
+
+<p>Overall I like this way of working, and certainly it was easier to make a new Adapter than I'd feared.  One future possibility is of making individual adaptors for specific queries, as a way of removing the query logic from my contoller.</p>]]></content>
+        </entry>
+    </feed>
