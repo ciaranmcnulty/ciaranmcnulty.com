@@ -6,7 +6,7 @@
 date_default_timezone_set('Europe/London');
 
 $uri = $_SERVER['REQUEST_URI'];
-$pagesFolder = dirname(__FILE__) . '/../pages/';
+$pagesFolder = dirname(__FILE__) . '/../includes/';
 $includesFolder = dirname(__FILE__) . '/../includes/';
 $blogFolder = dirname(__FILE__) . '/../blog/';
 $blogIndex = dirname(__FILE__) . '/../blog-index.json';
