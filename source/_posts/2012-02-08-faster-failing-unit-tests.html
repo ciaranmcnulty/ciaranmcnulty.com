@@ -1,0 +1,61 @@
+---
+title: Faster failing Unit Tests
+tags: [ php,unit-testing ]
+---
+<p>One of the things about unit tests is that if they're going to fail, it's best if they fail quickly.
+
+<p>(This is also a key element of Scrum and other Agile approaches - if you're going to fail, do it as early as possible).
+
+<p>I was listening to <a href="http://www.se-radio.net/2010/09/episode-167-the-history-of-junit-and-the-future-of-testing-with-kent-beck/">this old episode of Software Engineering Radio</a> and in it Kent Beck made the following observations:
+
+<ol>
+<li>Ideally you want to run the tests most likely to fail first, so that you get faster feedback
+<li>Statistically the most likely tests to fail are the ones that failed recently (i.e. if a test hasn't failed for a while it's less likely to fail next time).
+</ol>
+
+<p>This really clicked with me, especially for things like CI, so I knocked up the following hacky script to run my phpunit tests through:
+
+<p><code><pre>
+&lt;?php
+
+$run_full = true;
+
+if (file_exists('last_run_report.xml')) {
+    
+    $failures = array();
+    $xml = simplexml_load_file('last_run_report.xml');
+    
+    if ($res = $xml-&gt;xpath('//error/../@file')) {
+        foreach ($res as $file) {
+            $failures[] = (string)$file;
+        }
+    }
+
+    if ($failures) {
+        echo 'PREVIOUSLY FAILING TESTS', PHP_EOL;
+        echo '------------------------', PHP_EOL;
+        passthru('phpunit '.join(' ', $failures), $exit);
+        
+        if ($exit &gt; 0) { 
+            $run_full = false; 
+        }
+        else {
+            echo PHP_EOL;
+            echo 'FULL TEST SUITE', PHP_EOL;
+            echo '---------------', PHP_EOL;
+        }
+    }
+}
+
+if($run_full){
+    passthru('phpunit --log-junit last_run_report.xml');
+}
+</pre></code></p>
+
+<p>When I use this to run my test suite instead of straight phpunit, it results in a local file called last_run_report.xml being generated. Next time I run the report, if there were any errors, the report is parsed and the failing tests are executed first.
+
+<p>This is <em>really primitive</em> but is already saving me a little time. The next step would be to get a DB involved and maybe log the last few executions of the current suite, to get some stats on how unstable tests have been over the last few executions and prioritise them that way.
+
+<p>I'm sure there's a bunch of other analysis you could do to work out statistically which tests are likely to fail - you could even do some sort of static code analysis and work out which tests have ben potentially impacted since the last test run.
+
+<p>I'll be running this little script locally for now, but with an eye to including it in our CI environment once I've a bit more confidence that it's a valid approach.

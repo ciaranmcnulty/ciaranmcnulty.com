@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title><![CDATA[Ciaran McNulty]]></title>
+    <link href="/blog/tags/microformats.xml" rel="self"/>
+    <link href="/"/>
+    <updated>2015-07-05T12:56:28+01:00</updated>
+    <id>/</id>
+        <generator uri="http://sculpin.io/">Sculpin</generator>
+            <entry>
+            <title type="html"><![CDATA[Rev-canonical should be handled with care]]></title>
+            <link href="/rev-canonical-should-be-handled-with-care"/>
+            <updated>2009-04-14T00:00:00+01:00</updated>
+            <id>/rev-canonical-should-be-handled-with-care</id>
+            <content type="html"><![CDATA[<p>A short while back, Google and a bunch of other search engines launched @rel="canonical", a standard for specifying that the current page is a copy of another, more canonical, version hosted elsewhere. <a href="http://ciaranmcnulty.com/blog/2009/02/rel-canonical-should-be-handled-with-care">I blogged about it at the time</a> , and generally approved of the idea but warned against overuse when an HTTP redirect might be more sensible.</p>
+  
+<p>Recently there's been a large amount of discussion about <a href="http://simonwillison.net/2009/Apr/11/revcanonical/">@rev="canonical"</a> , a proposal that seems to have been floated with the intention of providing <a href=http://revcanonical.appspot.com/ id=zueh title="URL shortening services">URL shortening services</a>. The idea is that my page can 'advertise' some other URLs that it can be found at so that clients can pick a different one to use when referring to it.</p>
+
+<p>In this particular use case I could publish a page at <strong><tt>http://ciaranmcnulty.com/blog/2009-04-14/a-long-blog-post-with-a-complex-url</tt></strong> that had a @rel="canonical" link to <strong><tt>http://ciaran.ws/complex</tt></strong> (I don't really have that domain, don't bother trying it). Applications that wanted a shorter URL for the content (e.g. Twitter clients, SMS gateways) could then use my shorter URL rather than having to get a more obfuscated one from <a href="http://tinyurl.com">TinyURL</a> or somewhere similar.</p>
+
+<p>The number of sites that have already included the markup is staggering in such a short time, and a testament to how a simple markup idea like this can really take off (if only Microformats could gain this kind of uptake!). I've been reading a lot of the commentary that's bouncing around the HTML blogosphere, and thought I'd put my &pound;0.02 in. Frankly, I fail to see the point of all the hooh-hah, for the following reasons:</p>
+
+<h4>@rev is deprecated.</h4>
+
+
+<p>@rev has been taken out of the proposed HTML5 specification because it's confusing and under-used, so this is probably the worst possible time to start a wide-ranging deployment of a new @rev value. The widespread use will have one of two results, either it'll be completely invalidated when HTML5 is finalised, or the deployment will cause @rev to be put back into the HTML5 spec. Either of these are bad results in my opinion.</p>
+
+<p>The reasons @rev was taken out of the HTML5 proposal are that basically:</p>
+
+<ol>
+  <li>Most uses of @rev turned out to be typos of @rel.</li>
+  <li>It was pointed that every @rev value could be turned into a @rel just by changing the keyword to indicate a reverse relation, e.g. @rev="parent" and @rel="child" are equivalent.</li>
+</ol>
+
+<p>On this basis, a better alternative to @rel="canonical" could be @rel="non-canonical" or something equally trivial - this could also be combined with @rel="alternate".</p>
+
+<h4>Using @rev="canonical" for redirect URLs is wrong</h4>
+
+<p>The idea of @rel="canonical" is to let search engines know that you have duplicate content at other URLs, and which version is the 'correct' one that they should be concentrating on including in their indexes. By that logic, @rev="canonical" should be a list of other URLs at which the same content as the current page exists, but would indicate to a search engine that the current URL is the one that should be used canonically. As an interesting use-case, a search engine could make indexing those URLs low-priority, or just ignore them completely.</p>
+
+<p>However, redirect URLs don't fit in with this usage. They're resources that will redirect to the current one, not resources that contain the same information. The distinction might seem like hair-splitting but I feel it's important that @rel="canonical" is seen as for situations where there are concrete individual pages at differenet URLs.</p>
+
+<p>On a related note, my friend Simon also has some strident opinions about 301 MOVED redirects from URLs that never initially hosted any content that I wish he'd blog about (hint hint!).</p>
+
+<h4>There are better semantics for URL shortening than @rev="canonical"</h4>
+
+<p>OK, so there's probably a use case for saying 'these other URLs have the same content as this page', but nearly all of the discussion has been concentrated on URL shortening.&nbsp; If we're going to use a head LINK to advertise a shorter URL for our content, there has to be a better way than saying 'these other URLs contain the same content' and letting the client check the length of each.</p>
+
+<p>I don't really know what to propose, but something like @rel="shorter-url" or @rel="short-url" or similar would seem to be sensible.&nbsp; Anything's fine as long as it's widespread and gets registered.&nbsp; It'd be nice if someone could knock up an HTML profile for us to use too, but they seem to be on the way out.</p>
+
+<p>Overall, the rev-canonical thing seems to be a fairly simple idea, with a few flaws, that's been overhyped and suddenly implemented everywhere with not much thought going into it.&nbsp; It may well achieve a few things though:</p>
+
+<ol>
+  <li>It's got people talking and thinking about @rel values, which is a good thing and might lead to more uptake of technologies like <a href="http://microformats.org/wiki/XFN">XFN</a>.</li>
+  <li>It's prompted a lot of discussion about HTML semantics, which is a good thing and could help promote <a href="http://microformats.org/wiki/posh">POSH</a> and <a href="http://microformats.org">Microformats in general</a>.</li>
+  <li>It's shown people how easy it can be to roll out a simple semantic HTML change on a large site, which has to be a good thing.</li>
+</ol>
+
+<p>I can only hope that that outweighs all the niggles I have with how rev-canonical is used, and frankly it's currently being used in such a narrow use-case that it doesn't really have a huge impact on the way we use the web.</p>
+
+<p>[EDIT: Just as I posted this, <a href=http://annevankesteren.nl/2009/04/rev-canonical id=ry8m title="Anne van Kesteren made the same points as me">Anne van Kesteren made the same points as me</a> , but in about 10% of the words and with none of the waffle.]</p>]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Rel-canonical should be handled with care]]></title>
+            <link href="/rel-canonical-should-be-handled-with-care"/>
+            <updated>2009-02-16T00:00:00+00:00</updated>
+            <id>/rel-canonical-should-be-handled-with-care</id>
+            <content type="html"><![CDATA[<p>Something we've been telling clients for years is to not publish the same information in more than one place.  There are many reasons for this from the point of view of web semantics, but the one that makes the clients listen is when we say that Google will penalise their site for it.</p>
+
+<p>As of today Google allow duplicate content as long as you <a href="http://googlewebmastercentral.blogspot.com/2009/02/specify-your-canonical.html">indicate clearly which version is the canonical one</a>.  This entails adding something like the following to the HEAD element in your duplicated page, pointing back to the original:</p>
+
+<code><pre>&lt;link rel="canonical" href="/the-other-page" /&gt;</pre></code>
+
+<p>This approach has been welcomed by many, but I'm fearful that it is duplicating already-existing web semantics as well as encouraging bad habits in web authors.</p>
+
+<h4>Redundancy, or why it's not needed</h4>
+
+<p>HTTP and HTML already have two mechanisms for dealing with URLs that contain duplicate content:</p>
+
+<h5>Permanent redirects</h5> 
+
+<p>If URLs are exactly equivalent, the server can send a <tt>301 Permanent Redirect</tt> header along with the location of the 'real' content.  This is useful in situations where there's no real reason to present different versions of the same page.</p>
+
+<h5>Content-location headers</h5>
+
+<p>HTTP allows the server to return a content-location header to indicate that the content of the current URL is a duplicate of that at another location.  <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">RFC2616</a> says:</p>
+	
+<blockquote>
+	The Content-Location value is not a replacement for the original requested URI; it is only a statement of the location of the resource corresponding to this particular entity at the time of the request. Future requests MAY specify the Content-Location URI as the request- URI if the desire is to identify the source of that particular entity.
+</blockquote>
+
+<p>... which would seem to duplicate the functionality of rel-canonical with an existing HTTP mechanism.  If authors didn't have access to the HTTP headers their server sent, they could embed it directly in their HTML using the META element:</p>
+
+<p><pre>&lt;meta http-equiv="content-location" content="/the-other-page" /&gt;</pre></p>
+
+<p>I'm therefore not sure why Google have chosen to re-invent the wheel in this way, my only guess would be that <a href="http://www.elementary-group-standards.com/html/html5-http-equiv-difference">HTML5 is largely deprecating http-equiv in META tags</a>. My main concern is that rel-canonical will start to be used in places where a permanent redirect would be more appropriate.</p>
+
+<p>Google don't follow any public processes for recommendations like this, presumably they have some internal debates but a lot of the time these things hit the web fully-formed and are powered forwards via Google's massive market share until other search engines support them.  It's a shame that they don't publish proposals before implementation though, as I'm sure a lot of interested groups would have had some strong opinions to share.</p>
+
+<h4>Where rel-canonical should not be used</h4>
+
+<h5>To fix badly configured webservers</h5>
+
+<p>Poorly configured webservers, or rather servers configured without much thought towards URL semantics, appear be the major source of duplicated content.  In that there's no reasoned plan behind these duplications, it's far better that the developer reconfigure the server properly than to start adding in markup to their documents.</p>
+
+<p>Some misconfiguration examples include:</p>
+
+<ul>
+	<li><strong>Site available under www.example.com and example.com</strong>.  This is rarely a carefully thought out issue, rather it's often just the server's default behaviour.  The best bet is to pick one subdomain and permanently redirect the other to it.  (It's worth having a look at <a href="http://no-www.org/">no-www.org</a> while you're making the decision).  I can't think of any strong reason for having it available (as in, being served under rather than redirected from) both domains - the site should be served on whatever subdomain you use on your headed notepaper.</li>
+	<li><strong>/foo and /foo/ and /foo/index.html all point to the same page</strong>.  Again this is just default behaviour, based on a hierarchical model of websites as folders full of files.  This is easily fixed with a bit of config to redirect all of them to /foo, but it's simple enough for even on a simple site to just standardise on 'missing off index.html in hyperlinks so that the duplicates are never referred to'.</li>
+</ul>
+
+<p>In both of these cases, I'd estimate the amount of effort involved in 'fixing' the config to be less than that of each page detecting what URL it's served on and generating an appropriate rel-canonical link.</p>
+
+<h5>To allow chaff in URLs</h5>
+
+<p>I previously wrote about how when a form is submitted the querystring is full of extraneous information, and <a href="http://ciaranmcnulty.com/blog/2008/11/keeping-querystrings-clean-with-zend-framework">how to make the resultant URLs more canonical using redirects</a>.</p>
+
+<p>It would be tempting to do something similar with rel-canonical but <strong>a permanent redirect is appropriate when the two URLs represent the same resource</strong>.  In an example like <tt>/search?size=10&colour=&shape=</tt>, the <em>meaning</em> of both of the requests is 'items that are size 10'.  Therefore it's entirely appropriate to redirect to <tt>/search?size=10</tt>.</p>
+
+<p>Another case worth looking at is when the results of a search are the same as the results of another.  An example might be if the URLs <tt>/search?size=10</tt> and <tt>/search?colour=red</tt> returned the exact same results. This may happen, for instance, if all the red items were only available in size 10.</p>
+
+<p>In this case the two URLs point at clearly different resources ('list of things that are size 10' vs 'list of things that are red'), and the equivalence may change over time.  Therefore it's not something we'd want to do a redirect between - is it an appropriate place for rel-canonical?</p>
+
+<p>Google's definition is a bit quiet on the details of what the exact semantics of rel-canonical are, but more importantly for these kinds of resources it'd be completely impractical to generate a list of which other resources might happen to contain the same list of results at the given time.</p>
+
+<h4>Where rel-canonical should be used</h4>
+
+<p>After all this griping, I can still see some cases where this new semantic might be useful, if we're going to be abandoning the Content-Location HTTP header (or rather, I can think of a few places where content-location would be appropriate that will presumably transfer over).</p>
+
+<p>The commonality between them really is that we don't want to <em>combine</em> the resources, either because we want to slightly vary the way they're presented or because we think that even though they're equivalent at the moment that they might stop being so in the future.</p>
+
+<h5>Presenting resources at different points in a site hierarchy</h5>
+
+<p>A common sort of URL online is: <tt>/red-widgets/widget2000</tt> that contain an identifier for the resource they're looking at as well as some sort of indication of the hierarchy of the site they're in.</p>
+
+<p>Really this sort of slash-separated construction doesn't contain any special meaning it's largely the same as <tt>?category=red-widgets&product=widget2000</tt> except that it contains an implicit hierarchy that hints that you can't have a product identifier without specifying a category.</p>
+
+<p>In a typical application, of course, the page served would contain lots of different contextual stuff such as links to other items in the same category, and maybe some breadcrumbs.  A product may exist in a number of different categories, so we would want to hint that the different URLs were somehow equivalent, without redirecting between them.</p>
+
+<p>Enter rel-canonical, this seems like an entirely appropriate usage to me.  From a resource point of view the page is something like 'widget2000's details in the red-widgets category', which is distinct from 'widget2000's details in the big-widgets category', but their contents are the same and we can hint that using rel-canonical.  Which version is the canonical one I would leave as an exercise to the reader.</p>
+
+<h5>Keeping temporarily-equivalent URLs separate</h5>
+
+<p>This example is from Google's own pages, but is quite a good one.  They quote Wiki type pages, where one wiki entry 'redirects' to another.  The way this is normally handled in Wikis is to not actually do a redirect, but present the same content with a note saying it's a redirect.</p>
+
+<p>Why do this?  Well, the reasoning seems to be that the resources might at some point stop being equivalent, so it's a good idea to keep them separated out.  This would seem to be a reasonable case for a temporary redirect or even a permanent redirect with a short(er) cache header, but in practical terms if the user bookmarks the URL or sends it to a friend, you want them to still have the 'original' URL in their address bar.</p>
+
+<p>This again does seem a reasonable use of rel-canonical, though one I'm less comfortable with.</p>
+
+<h4>Future progress</h4>
+
+<p>I have a few ideas I'd like to see considered for moving this technology forwards:</p>
+
+<ol>
+	<li>Adoption of rel-canonical on A elements as well as just HEAD.  A lot of the time (i.e. in the Wiki example) a valid link to the alternate will already exist on the page.  If the @rel could be added on to this rather than having to exist in the head, it would save a bit of effort and keep the markup local to the link.</li>
+	<li>Use of this in Microformats, specifically in the field of finding canonical hCards and so on.  There are <a href="http://microformats.org/wiki/hcard-brainstorming-autodiscovery">already efforts to do similar things</a>, but if this semantic becomes widespread it's worth adopting.</li>
+	<li>Really, a bit more definition of what this @rel value is trying to indicate in terms of REST semantics.  The wording from Google has so far been fairly focussed on what it means practically for search indexing, but it'd be good to see them look at it from a more academic point of view.</li>
+</ol>
+]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Embedding third-party content in your site using oEmbed]]></title>
+            <link href="/embedding-third-party-content-in-your-site-using-oembed"/>
+            <updated>2009-01-28T00:00:00+00:00</updated>
+            <id>/embedding-third-party-content-in-your-site-using-oembed</id>
+            <content type="html"><![CDATA[<p>There's a whole class of 'Web 2.0' technologies that have emerged recently which have some common features: They solve a simple problem, they do so in a decentralised way and they stay simple. As examples I'd quote things like <abbr title="eXtensible Friends Network"><a href="http://microformats.org/wiki/xfn">XFN</a></abbr>, <a href="http://openid.net">OpenID</a>, <a href="http://oauth.net">oAuth</a> and even things like <a href="http://cyber.law.harvard.edu/rss/rss.html">RSS</a> and <a href="http://tools.ietf.org/html/rfc5023">Atom feeds</a>.  They start off by solving a particular use case, and stay as simple as possible (or at least should - I'm looking at you OpenID).</p>
+
+<p>The latest such technology to interest me is <a href="http://oembed.com/">oEmbed</a>, via a blog post by <a href="http://ben-ward.co.uk/blog/microformat-2009/">Ben Ward</a>.  The name is a bit cryptic, but the use case it addresses is one of <em>embedding content from one site into another</em>.  That may sound like something esoteric, but just looking back over the handful of blog posts I've done on this very site, a large number of them contain images from Flickr.  Looking around the web as a whole people are constantly embedding videos and images from sites all around the web into their forums, blog posts and CMSes.</p>
+
+<div>
+<p>There are a couple of ways this is normally done in the wild, neither of which are that satisfactory.</p>
+<ol>
+	<li><strong>The site the content is hosted on generates a snippet of HTML</strong> - From looking at a page with the content on, a couple of clicks will give the user some HTML that they can copy and paste into their HTML editor.  This is ok for people who are happy with HTML and actually have the ability to edit the HTML in their posts rather than using some sort of WYSIWYG, but can be confusing for novice users.  This technique also limits the ability of the receiving site to reformat the content to fit into any existing templating.</li>
+	<li><strong>The site the content is hosted on gets screen-scraped</strong> - Some blogging platforms and CMSes know how major sites like Flickr or YouTube structure their HTML so are able to extract images and videos from just a URL.  This of course falls down if the HTML changes significantly, and if you're trying to post content from a site your platform doesn't know about, you're out of luck.</li>
+</ol>
+
+<p>Of the two existing solutions, the second has the best user story.  The user clicks an button, pastes in a URL to the content on another site, and the patform slurps up the content, reformats it to fit in with any house styles and inserts it into the content area.  What's needed is a way to do this in a decentralised way, which is where oEmbed comes in.</p>
+
+</div>
+
+<h4>How oEmbed works</h4>
+
+<p>What happens with a system that supports oEmbed is as follows:</p>
+
+<ol>
+	<li>The user pastes in a URL at which content is hosted.</li>
+	<li>The system checks that URL to find the address of its oEmbed API via a LINK element in the document's HEAD.  This step could be cached as the API location is unlikely to change often.</li>
+
+	<li>The system does a GET to the oEmbed API, essentially asking 'what is the content for this URL'?</li>
+	<li>The system gets a JSON or XML response containing structured metadata for the item.</li>
+	<li>The system formats the data however it deems appropriate.</li>
+</ol>
+
+<p>A practical example with a picture from my Flickr would be:</p>
+
+<ol>
+	<li>I give the URL <a href="http://flickr.com/photos/ciaranmcnulty/429868897/">http://flickr.com/photos/ciaranmcnulty/429868897</a>, one of my holiday snaps.</li>
+
+	<li>The system sees from the page that the oEmbed API is at http://flickr.com/services/oembed.</li>
+	<li>The system does a GET to <a href="http://flickr.com/services/oembed?url=http://flickr.com/photos/ciaranmcnulty/429868897/">http://flickr.com/services/oembed?url=http://flickr.com/photos/ciaranmcnulty/429868897/</a></li>
+	<li>The system gets the following response:
+<pre><code>&lt;oembed&gt;
+    &lt;version&gt;1.0&lt;/version&gt;
+    &lt;type&gt;photo&lt;/type&gt;
+
+    &lt;title&gt;Rosella parrot&lt;/title&gt;
+    &lt;author_name&gt;CiaranJMcNulty&lt;/author_name&gt;
+    &lt;author_url&gt;http://www.flickr.com/photos/ciaranmcnulty/&lt;/author_url&gt;
+    &lt;cache_age&gt;3600&lt;/cache_age&gt;
+
+    &lt;provider_name&gt;Flickr&lt;/provider_name&gt;
+    &lt;provider_url&gt;http://www.flickr.com/&lt;/provider_url&gt;
+    &lt;width&gt;375&lt;/width&gt;
+    &lt;height&gt;500&lt;/height&gt;
+
+    &lt;url&gt;http://farm1.static.flickr.com/185/429868897_18ea03200a.jpg&lt;/url&gt;
+&lt;/oembed&gt;
+</code></pre>
+	</li>
+	<li>The system reformats this according to some sort of template into:
+<pre><code>&lt;div class=&quot;figure&quot;&gt;
+    &lt;div id=&quot;caption&quot;&gt;Rosella parrot&lt;/div&gt;
+
+    &lt;a href=&quot;http://www.flickr.com/photos/ciaranmcnulty/&quot;&gt;
+    	&lt;img src=&quot;http://farm1.static.flickr.com/185/429868897_18ea03200a.jpg&quot; width=&quot;375&quot; height=&quot;500&quot; /&gt;
+    &lt;/a&gt;
+
+&lt;/div&gt;
+</code></pre>	
+	</li>
+</ol>
+
+<p>The oEmbed format docs specify a few different content types: 'image', 'video', 'rich' (i.e. HTML for embedding) and a whole bunch of different URL parameters you can add into the request, for instance you can ask for the result as JSON instead, specify a maximum size for images, specify that you only accept images and so forth.</p>
+
+<h4>Why oEmbed is awesome, sort of</h4>
+
+<p>On the Internet it's mostly easier to complain than praise, but there are some things oEmbed has done well.</p>
+
+<ul>
+	<li><strong>It addresses the problem.</strong> It's easy to underestimate how important this is.  The authors of the oEmbed spec have managed to identify an area that could be improved for users, and have generated a system that does it in a fairly reasonable manner. Frankly even if oEmbed doesn't take off it's got people thinking about the problem.</li>
+
+	<li><strong>The response formats are really well thought out.</strong>  The spec defines a useful transfer format for the domain that covers most scenarios I can think of.  There's obviously a lot of time and effort that's gone into it, and they've been careful to think about how it would be integrated into real-world Javascript code.</li>
+</ul>
+
+<h4>Why oEmbed sucks, sort of</h4>
+
+<p>All in all oEmbed is a promising technology, and the big appeal for me is the way it simplifies the entire process for the user.  There are however a few bits of the process I think are, well, lame.</p>
+
+<ul>
+	<li><strong>Multiple URLs for a single resource is not very RESTful.</strong> The request to the 'API' can contain a parameter saying whether the response should be XML or JSON.  This generates two separate URLs for what is essentially the same resource, a violation of REST principles and a waste of the HTTP Accepts header, which does this in a much nicer way.</li>
+
+	<li><strong>'Autodiscovery' is long-winded.</strong> From knowing a URL of an HTML representation of a resource, I then have to examine that HTML to find out an API location, then construct my own URL based on that and the original URL, from which I can get the oEmbed response... phew! Again, this just duplicates URLs for a resource - I <em>have</em> a URL to the resource so why can't I just do a request to the original URL, but ask for an oEmbed content-type?</li>
+	<li><strong>The data is already there on the page.</strong> OK so this is me with my Microformats head on, but I wouldn't be very surprised if most of the data exposed in a typical oEmbed response is actually present in the HTML anyway.  What would be pretty cool would be a way of embedding oEmbed data inside HTML, either via POSH-type semantic HTML, a Microformat, or even some sort of RDFa vocabulary.  I mentioned Ben Ward earlier and he's expressed a strong intention to work on this so I'll be interested to see how he gets on.</li>
+	<li><strong>People aren't using it.</strong> A few sites support oEmbed but it's not hit the critical mass needed yet where a CMS or blogging platform could use it for their main embedding solution.</li>
+
+</ul>
+
+<h4>oohEmbed - A third party solution</h4>
+
+<p>My first instincts when pondering the problems of Autodiscovery and the lack of support specified above, were to build a tool that did oEmbed requests in the background, but presented a nic(er) interface, and added in support for sites that didn't yet support oEmbed.</p>
+
+<p>Imagine my annoyance when I found out someone called Deepak Sarda had already done this, months ago at <a href="http://oohembed.com">oohEmbed</a>!</p>
+
+<p>From the developer's point of view, oohEmbed takes out a big step in the oEmbed process - discovery.  Rather than doing oEmbed requests to API endpoints defined by each separate service, oohEmbed exposes an oEmbed API that accepts requests for basically any service, and adds support for those with other APIs the author can tap into.</p>
+
+<p>For example, if I wanted to get an oEmbed response for my Flickr via oohEmbed, rather than the long-winded process described above I'd do a single GET to a URL at oohEmbed - <a href="http://oohembed.com/oohembed/?url=http://flickr.com/photos/ciaranmcnulty/429868897/">http://oohembed.com/oohembed/?url=http://flickr.com/photos/ciaranmcnulty/429868897/</a> - and get essentially the same response I'd have got if I'd gone to Flickr directly.</p>
+
+<p>Furthermore, if I want to get a YouTube video I can do a similar request to <a href="http://oohembed.com/oohembed/?url=http://youtube.com/watch?v=fWUedF_eTvg">http://oohembed.com/oohembed/?url=http://youtube.com/watch?v=fWUedF_eTvg</a> and get the following oEmbed response, despite the fact that YouTube does not yet support oEmbed!  I get an oEmbed JSON response anyway, that I can use right away:</p>
+
+<p><pre><code>{
+    &quot;version&quot;: &quot;1.0&quot;,
+    &quot;type&quot;: &quot;video&quot;,
+    &quot;provider_name&quot;: &quot;YouTube&quot;,
+    &quot;width&quot;: 425,
+    &quot;height&quot;: 355,
+    &quot;html&quot;: &quot;&lt;embed src='http://www.youtube.com/v/fWUedF_eTvg' type='application/x-shockwave-flash' wmode='transparent' width='425' height='355'&gt;&lt;/embed&gt;&quot;
+
+}</code></pre></p>
+
+<p>Now that's not perfect, but it works pretty well, returns something usable, and is far less complex than a full oEmbed discovery process, so is something that could very simply be used in some Javascript code.</p>
+
+<h4>Where do I go from here?</h4>
+
+<p>I've still got half an idea to implement a front end for oEmbed.  I like the oohEmbed solution, but my qualms about the REST nature of oEmbed aren't really assuaged by it and it'd be an interesting process to go through.</p>
+
+<p>I'll be watching the progress of the Microformats embedding efforts once they start, and attempting to put my 2p's worth into the process via the mailing list and wiki.</p>
+
+<p>Also, I've half an idea to start embedding content into this site via oEmbed, taken from places like my Delicious bookmarks, my flickr and other sites.  I'd just need to make sure that that sort of Tumblr-style content didn't crowd out the sporadic 'real' blog posts I make, I guess!.</p>
+]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Keeping your Javascript clean]]></title>
+            <link href="/keeping-your-javascript-clean"/>
+            <updated>2008-10-29T00:00:00+00:00</updated>
+            <id>/keeping-your-javascript-clean</id>
+            <content type="html"><![CDATA[<p>I've been doing a bit more Javascript recently, specifically using Prototype AJAX stuff with Google Maps ,and I've come up with a few guiding principles that have helped me keep stuff neat and tidy.  I thought I'd share them with you, my handful of readers.</p>
+
+<h4>SCRIPT tags should live inside HEAD</h4>
+
+<p>There are very few reasons for having SCRIPT tags inside the document body.   The main one, use of <tt>document.write()</tt> nearly always leads to ugly code.  It's also not actually allowed in XHTML, despite most browsers accepting it as long as the page is delivered as <tt>text/html</tt>.</p>
+
+<p>Furthermore, SCRIPT in the document body is in my opinion always the result of a perceived problem that's actually the result of poor architectural choices.</p>
+
+<h4>Data and markup should live in HTML and styles should live in CSS</h4>
+
+<p>Somewhat related to the first point, sometimes it's tempting to do something like this on-page or in some server-generated JS to get information into your scripting language:</p>
+
+<code><pre>
+&lt;script type=&quot;text/javascript&quot;&gt;
+lng = &lt;?php echo $lat ?&gt;;
+lat = &lt;?php echo $lng ?&gt;;
+drawTheMap(lat,lng);
+&lt;/script&gt;</pre></code>
+
+<p>What's a little nicer is to put the info somewhere into your HTML with a distinct ID or CLASS, and let your scripting language read it out of the DOM.  That way you can avoid the sticky situations of trying to generate client-side code from your server-side code.</p>
+
+<p>For example the data could be stored on the page somewhere sensible using <a href="http://www.microformats.org/wiki/geo">the GEO microformat</a>:</p>
+
+<code><pre>
+Location: &lt;abbr id=&quot;location&quot; class=&quot;geo&quot; 
+    title=&quot;&lt;?php echo $lat ?&gt;;&lt;?php echo $lng ?&gt;&quot;&gt;
+    6 Example Street
+&lt;/abbr&gt;</pre></code>
+
+<p>And then read out from the DOM using something like the following:</p>
+
+<code><pre>
+&lt;script type=&quot;text/javascript&quot;&gt;
+if(locElement = document.getElementById('location')){
+    if(locElement.className='geo'){
+        if((loc = locElement.title.split(';')) &amp;&amp; loc.length==2){
+            lng = loc[0];
+            lat = loc[1];
+            drawTheMap(lat,lng);
+        }
+    }
+}
+&lt;/script&gt;</pre></code>
+
+<p>Now, that looks slightly longer than the previous example but consider that it won't change from page to page, so can live in a client-cached JS file.  The first example would need to either lie inside every HTML page, or be in a server-generated .js with nocache headers and be reloaded on every page.</p>
+
+<p>As an aside, if you really don't have anywhere sensible in your visible markup to show this data, you could always put it in a HEAD element like META if you really need to - I've toyed with keeping my google API keys in there for instance.</p>
+
+<h4>There should only be one SCRIPT tag on the page</h4>
+
+<p>Perhaps the rule I'm least sure of, but one I've been trying to stick to as much as possible and I've found it helpful.  Having one central JS that controls everything makes the path of execution of your code a lot cleaner.  When you have multiple SCRIPTs on the page (and when you have them knocking around in the BODY) you can get into situations where different scripts are trying to set window.onload, executing out of order and so forth.</p>
+
+<p>To continue the Mapping example above, a lot of my pages used to have:</p>
+
+<code><pre>
+&lt;script language=&quot;text/javascript&quot; src=&quot;myscript.js&quot;&gt;&lt;/script&gt;
+
+&lt;?php if(thereMightBeAMapOnThisPage()){ ?&gt;
+&lt;script language=&quot;text/javascript&quot; src=&quot;http://maps.google.com...&quot;&gt;
+&lt;/script&gt;
+&lt;?php } ?&gt;</pre></code>
+
+<p>This relies on the script generating the head knowing whether the mapping API is needed.  Neater in my opinion is to eliminate this and detect inside my own Javascript, whether the API is needed:</p>
+
+<code><pre>
+&lt;script language=&quot;text/javascript&quot;&gt;
+
+if(locElement = document.getElementById('location')){
+  var script = document.createElement(&quot;script&quot;);
+  script.src = &quot;http://www.google.com/jsapi?key=asd[...]asd3&amp;
+  script.type = &quot;text/javascript&quot;;
+  document.getElementsByTagName(&quot;head&quot;)[0].appendChild(script);
+}
+&lt;/script&gt;</pre></code>
+
+<p>What this is doing essentially is inserting the SCRIPT into the HEAD via the DOM!  It may well look messy at first glance, but it's worked in all the browsers I've tried it on and is the way Google recommend pulling in their external scripts.</p>
+
+<h4>Use the Google AJAX Libraries API</h4>
+
+<p>OK so this isn't so much a rule as something I think is fairly handy, and I'm sorry if I keep going on about Google!</p>
+
+<p><a href="http://code.google.com/apis/ajaxlibs/">Google are hosting lots of the common Javascript libraries</a>, including Prototype which I use.  Loading your Javascript library via the AJAX loader doesn't make much difference, but it does offer a few advantages:</p>
+
+<ul>
+    <li>You get to use the google.load() functionality from within your script, which is quite tidy and helps with my previous point.</li>
+    <li>It's served from the Google servers so you don't pay for the bandwidth, and it can download faster in parallel with content from your domain (most browsers won't open more than 2 simultaneous connections to a single server).</li>
+    <li>Because it's sitting at one central location, if everyone starts doing this then most clients will have the JS already cached when they hit your site, rather than them redundantly loading it for each server they encounter.</li>
+
+    <li>If you do decide in future that Google are too evil to download code from, switching back to a local copy of your library is fairly trivial.</li>
+</ul>]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[How much of your data is available online?]]></title>
+            <link href="/how-much-of-your-data-is-available-online"/>
+            <updated>2008-10-01T00:00:00+01:00</updated>
+            <id>/how-much-of-your-data-is-available-online</id>
+            <content type="html"><![CDATA[<p>One of the emergent web technologies I'm very interested in is the <a href="http://www.microformats.org">Microformats</a> project, a set of ways of making data embedded in HTML documents machie-readable.</p>
+
+<p>Two of the most widely adopted Microformats are <a href="http://microformats/org/wiki/hCard">hCard</a> and <a href="http://www.microformats.org/wiki/XFN">XFN</a>.</p>
+
+<p>hCard is a standardised method for marking up contact data.  the point of it is that if all sites mark up contact data the same way, it's easier to parse.</p>
+
+<p>XFN is all about the relationships between sites, and one of its key features is that it allows you to identify that a set of online profiles all belong to the same person (if they've voluntarily linked them).</p>
+
+<p>I thought I'd take a survey of the data about me that's available publically online and exposed via these two formats:</p>
+
+<table class="data-table">
+<thead>
+    <tr>
+        <th>hCard Field</th>
+        <th>Value</th>
+        <th>Source</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td rowspan="2">Nickname</td>
+        <td>ciaranmcnulty</td>
+        <td>LiveJournal, YouTube, Twitter</td>
+    </tr>
+    <tr>
+        <td>CiaranJMcNulty</td>
+        <td>Flickr</td>
+    </tr>
+    <tr>
+        <td rowspan="2">Full name</td>
+        <td>Ciaran McNulty</td>
+        <td>CiaranMcNulty.com, Flickr, Last.fm, Facebook, LinkedIn</td>
+    </tr>
+    <tr>
+        <td>CiaranMcNulty</td>
+        <td>YouTube, Twitter</td>
+    </tr>
+    <tr>
+        <td>Given name</td>
+        <td>Ciaran</td>
+        <td>CiaranMcNulty.com, Flickr, Last.fm, Facebook, LinkedIn</td>
+    </tr>
+    <tr>
+        <td>Family name</td>
+        <td>McNulty</td>
+        <td>CiaranMcNulty.com, Flickr, Last.fm, Facebook, LinkedIn</td>
+    </tr>
+    <tr>
+        <td rowspan="2">Email</td>
+        <td>mail@ciaranmcnulty.com</td>
+        <td>CiaranMcNulty.com</td>
+    </tr>
+    <tr>
+        <td>mail [at] ciaranmcnulty.com</td>
+        <td>Flickr</td>
+    </tr>
+    <tr>
+        <td rowspan="2">Address</td>
+        <td>United Kingdom</td>
+        <td>Last.fm</td>
+    </tr>
+    <tr>
+        <td>London, United Kingdom</td>
+        <td>LinkedIn</td>
+    </tr>
+    <tr>
+        <td>Tel</td>
+        <td>+447092305237</td>
+        <td>CiaranMcNulty.com</td>
+    </tr>
+    <tr>
+        <td rowspan="4">Photo</td>
+        <td><img src="http://p-userpic.livejournal.com/23103983/2730323" /></td>
+        <td>LiveJournal</td>
+    </tr>
+    <tr>
+        <td><img src="http://userserve-ak.last.fm/serve/126/1300183.jpg" /></td>
+        <td>Last.fm</td>
+    </tr>
+    <tr>
+        <td><img src="http://profile.ak.facebook.com/profile5/1734/4/s600005468_4105.jpg" /></td>
+        <td>Facebook</td>
+    </tr>
+    <tr>
+        <td><img src="http://i1.ytimg.com/i/L8oa021mTWjabqI2pUHNRA/1.jpg" /></td>
+        <td>YouTube</td>
+    </tr>
+    <tr>
+        <td>Logo</td>
+        <td><img src="http://farm3.static.flickr.com/2244/buddyicons/67088004@N00.jpg?1207731389#67088004@N00" /></td>
+        <td>Flickr</td>
+    </tr>
+</tbody>
+</table>
+
+<p>Taken as an aggregated whole, there's a fairly complete set of contact details out there! Personally I don't mind all of this information being out there, but I know a lot of people who would be horrified if they realised how much was already exposed to search engines and other spiders.</p>
+
+<p>What interests me is that all this data is already out there in the wild for a lot of us, it's just not previously been machine-readable.  What's also important to realise is that in today's world of web archives and Google caches, once data is public it's pretty much going to be available forever.  A lot of us provide data to websites without really thinking about how that data will be displayed and used in future.</p>
+
+<p>As more and more of our lives are lived online, we're all going to leave trails like this and will have to start thinking about how to manage it.</p>
+
+<p>One solution is to maintain more than one identity.  XFN allows identities to be consolidated together, but there's no reason they have to be.  If I wanted to, for instance, I could break the XFN links to and from my Flickr account and essentially keep that identity separate in a machine-readable sense.  The use of pseudonyms would come in handy here, for people with less distinctive names.</p>
+
+<p>One way or another though, you need to take the time to think about what you're typing into that registration form, and whether you're happy having it online.</p>]]></content>
+        </entry>
+    </feed>

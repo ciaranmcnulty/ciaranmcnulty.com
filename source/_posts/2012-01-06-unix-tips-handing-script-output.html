@@ -1,0 +1,37 @@
+---
+title: Unix tips: handling script output
+tags: [  ]
+---
+<p>Wow I've not blogged in ages! Here's a couple of quickies that I seem to rediscover every 6 months and promptly forget - hopefully writing them here will make them stick in my head.
+
+<h4>Logging output to disk</h4>
+
+<p>Obviously to log the output of some process to disk you'd normally use <tt>&gt;</tt> or <tt>&gt;&gt;</tt>. However, sometimes you want to also use the output for some other process.
+
+<p>In instances like this you'd use <tt>tee</tt>:</p>
+
+<p><code><pre>
+php my-script.php | tee -a /var/log/my-script.log | other-script
+</pre></code>
+
+<p>The output of my my-script.php will be both written to my my-script.log, and piped to other-script for further processing (the -a flag means the output is appended to the log rather than it being overwritten).
+
+<h4>Emailing output when something happens</h4>
+
+<p>The <tt>mail</tt> command provides a simple way to mail the output of a script:
+
+<p><code><pre>
+php myscript.php | mail -s "A subject line" address@example.com
+</pre></code>
+
+<p>However this gets annoying when your script runs every 5 minutes, so more recent implementations of <tt>mail</tt> have a <tt>-E</tt> flag that only sends the mail if the output wasn't empty:
+
+<p><code><pre>
+php myscript.php 2&amp;&gt;1 | mail -E -s "A subject line" address@example.com
+</pre></code>
+
+<p>In this example the mail will only be sent if myscript.php output something (or an error, the 2&amp;&gt;1 redirects its error output to its standard output).
+
+<p>Unfortunately commenting is currently disabled, so hit me on twitter @CiaranMcNulty if you have any other tips for what to do with output and I'll maybe write a follow-up article.
+
+

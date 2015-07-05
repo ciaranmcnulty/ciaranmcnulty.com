@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title><![CDATA[Ciaran McNulty]]></title>
+    <link href="/blog/tags/linux.xml" rel="self"/>
+    <link href="/"/>
+    <updated>2015-07-05T12:56:28+01:00</updated>
+    <id>/</id>
+        <generator uri="http://sculpin.io/">Sculpin</generator>
+            <entry>
+            <title type="html"><![CDATA[Tether to iPhone with Ubuntu 9.10 Karmic Koala]]></title>
+            <link href="/tether-to-iphone-with-ubuntu-9-10-karmic-koala"/>
+            <updated>2010-03-24T00:00:00+00:00</updated>
+            <id>/tether-to-iphone-with-ubuntu-9-10-karmic-koala</id>
+            <content type="html"><![CDATA[<p>I just did a fresh Ubuntu Karmic reinstall after an ill-conceived upgrade to a Lucid Alpha, so I had to try and retrace my fairly muddled steps in configuring iPhone tethering.   
+
+<p>Because I had a fair idea what I was doing this time it was pretty easy, so I figured I'd best document the steps for the next unfortunate soul trying to do the same.  I'd also be interested to hear if the same steps apply to Lucid once it's out of Beta.
+
+<div style="float: right; margin: 0 0 1em 1em; clear: right"><a href="http://www.flickr.com/photos/ciaranmcnulty/4460108683/" title="iPhone tethering by CiaranJMcNulty, on Flickr"><img src="http://farm5.static.flickr.com/4041/4460108683_bf732c6c7e_m.jpg" width="160" height="240" alt="iPhone tethering" /></a></div>
+
+<p>The first thing to do is get tethering enabled by your operator.  For some reason O2 can only enable it overnight so make sure you get it well before you'll need it.  Once it's enabled, you'll find your phone has a new option under Settings-&gt;General-&gt;Network-&gt;Internet Tethering.  Make sure you turn it on in here and then forget about it - it's only enabled for devices that are paired over Bluetooth or USB so there's not much of a security worry.
+
+<p>The next step is to get the Ubuntu side sorted.  The best bet is to install the Bluetooth Manager widget Blueman, which will replace your existing Bluetooth widget.  Blueman is much better than the default simple widget, but unfortunately either the way the iPhone exposes its network access point is non-standard or it's a bit advanced because the older version of Blueman in the Ubuntu Karmic sources is not capable of connecting - you'll need to install a newer version from Blueman directly.
+
+<p>The best way of doing this is to add the Blueman PPA and install it from them via apt:
+
+<code><pre>
+$ sudo add-apt-repository ppa:blueman/ppa
+$ sudo apt-get upgrade
+$ sudo apt-get install blueman
+</pre></code>
+
+<p>I found after doing this the old bluetooth widget was hanging around, but restarting X fixed that.
+
+<p>To make the iPhone discoverable, go to Settings-&gt;Network-&gt;Bluetooth and just leave the page open.  Most phones require you to somehow make your handset discoverable, but Apple decided that it's discoverable just for as long as you're on this page.
+
+<p>Next, pop open Blueman and click search, and you'll see a list similar to this one:
+
+<div><a href="http://www.flickr.com/photos/ciaranmcnulty/4460136087/" title="Blueman by CiaranJMcNulty, on Flickr"><img src="http://farm5.static.flickr.com/4041/4460136087_5fdd62d92a_o.png" width="407" height="245" alt="Blueman" /></a></div>
+
+<p>Right-click on the iPhone and select Pair, both the phone and the PC will pop up a confirmation code and you should confirm on both that they're the same.  After pairing happens you should be able to right-click on the iPhone in Blueman and select 'Network access point' to connect via it (even if the phone is not on the Bluetooth screen).
+
+<p>As an added bonus, you should find after your next reboot there'll be a new entry in Network Manager next to the available wireless networks called something like 'Network Access Point on <name of phone>' so you can initiate a bluetooth/tethering connection with one click in future without having to run Blueman.
+]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Converting HTML to PDF using wkhtmltopdf]]></title>
+            <link href="/converting-html-to-pdf-using-wkhtmltopdf"/>
+            <updated>2009-04-09T00:00:00+01:00</updated>
+            <id>/converting-html-to-pdf-using-wkhtmltopdf</id>
+            <content type="html"><![CDATA[<p>I blogged a while back about <a href="http://ciaranmcnulty.com/blog/2008/08/delivering-pages-as-pdf-using-php">delivering pages as PDF using PHP</a>, and at the time DOMPDF seemed to be the best-of-breed package for converting HTML into PDF for the purposes of delivering PDF versions of web content.</p>
+
+<p>However, I noted at the time that DOMPDF's last release was in July 2007, and it still doesn't look like being updated any time soon. The fundamental problem with packages like DOMPDF is that they tend to implement their own rendering engine.  The thing is, HTML and CSS are both pretty huge now - writing a rendering engine that can cope with all the different combinations is a huge task, so projects like DOMPDF end up missing out important bits of functionality.</p>
+
+<p>A better approach would be to use an existing rendering engine from a browser, and then build a binary around it that can take a website as input and produce a PDF as output.  That way you can get results consistent with how browsers would print a page and if you pick the right engine you'll not have to keep up with any changes to HTML standards, the engine developers will do that for you.</p> 
+
+<p>This is essentially the approach <a href="http://code.google.com/p/wkhtmltopdf/">wkhtmltopdf</a> takes: it extracts the open-sourced Webkit renderer used inside browsers like Safari and Chrome and bundles it up into a Linux CLI application which produces some pretty impressive results.</p>
+
+<p>I thought I'd jump right in and start by compiling it on my Debian webserver.  The wkhtmltopdf site has some instructions for building it on Ubuntu, which I thought were worth a try.  The basic procedure was as follows:</p>
+
+<p><code><pre>#apt-get update
+#apt-get install libqt4-dev qt4-dev-tools build-essential cmake
+
+#svn checkout http://wkhtmltopdf.googlecode.com/svn/trunk/ wkhtmltopdf
+#cd wkhtmltopdf
+#cmake -D CMAKE_INSTALL_PREFIX=/usr .
+#make
+#sudo make install</pre></code></p>
+
+<p>In my case, this installed a terrifying amount of new packages to my server, but everything went very smoothly.  I was left with a binary in /usr/bin and ploughed right in!</p>
+
+<p><code><pre>#wkhtmltopdf http://ciaranmcnulty.com /tmp/ciaranmcnulty.pdf
+wkhtmltopdf: cannot connect to X server</pre></code></p>
+
+<p>Argh.  The rendering engine depends on there being a GUI running on the machine so it can do cool things like generate graphics, render fonts and so forth.  A typical webserver won't be running X, but luckily there are ways around it.  </p>
+
+<p>One such way is <a href="http://www.x.org/archive/X11R6.8.1/doc/Xvfb.1.html">xvfb</a>, or the X Virtual Frame Buffer.  This is a handy bit of code that basically runs an X instance but without a lot of the overheads.  You can create a temporary X buffer and run a command in it using the xvfb-run binary, the benefit of which is that the x instance gets thrown away afterwards.  I installed xvfb and then invoked it as follows:</p>
+
+<p><code><pre>#apt-get install vfb
+#xvfb-run -a -s "-screen 0 640x480x16" wkhtmltopdf --dpi 200 
+  --page-size A4 http://ciaranmcnulty.com /tmp/ciaranmcnulty.pdf</pre></code></p>
+
+<p>The options should be fairly self-explanatory, the key things to note are that -a makes xvfb pick an unused display number (to avoid collisions) and -screen starts up the virtual framebuffer with a display with the correct bit depth and dimensions.</p>
+
+<p>The results are fairly good, certainly better than PHPDOM would generate given the same input.  My site layout uses a fair bit of floating and absolute positioning, and the PDF came out exactly as I'd expect:</p>
+
+<p><a href="http://www.flickr.com/photos/ciaranmcnulty/3426661909/" title="Website PDF by CiaranJMcNulty, on Flickr"><img src="http://farm4.static.flickr.com/3375/3426661909_46aa0e293d.jpg" width="500" height="500" alt="Website PDF" /></a></p>
+
+<p>It's important to note that this isn't a bitmap, the text in the PDF is still 'text'.</p>
+
+<p>A quick dig around showed that to print the backgrounds I'd need to have Qt4.5 installed, something I wasn't really prepared to risk my server for.  However, I thought I'd quickly try doing what I should have in the first place.  The wkhtml project provides a linux binary that's statically compiled against Qt.</p>
+
+<p>I downloaded this binary and gave it a whirl.  The results were much better:</p>
+
+<p><a href="http://www.flickr.com/photos/ciaranmcnulty/3426662113/" title="Website PDF with backgrounds by CiaranJMcNulty, on Flickr"><img src="http://farm4.static.flickr.com/3339/3426662113_f5de7809fe.jpg" width="500" height="500" alt="Website PDF with backgrounds" /></a></p>
+
+<p>Frankly I think this is a great rendition of the page, and certainly good enough for an autogenerated PDF on a website.  A bit of further investigation and experimentation has left me pretty impressed with the breadth of CSS print functionality webkit can support.</p>
+
+<p>The next step for me is going to be to try and replace some of the DOMPDF installations in some of my smaller sites, and see how it performs under load. The time taken to generate a PDF is pretty high, and I've not really checked out how xvfb is with concurrency so I'd hesitate to throw it onto a production site straight away, but it'll be my first port of call next time I want to do something with a PDF.</p>
+]]></content>
+        </entry>
+    </feed>

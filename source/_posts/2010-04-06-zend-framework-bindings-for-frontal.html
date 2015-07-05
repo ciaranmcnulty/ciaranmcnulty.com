@@ -1,0 +1,51 @@
+---
+title: Zend Framework bindings for Frontal
+tags: [ php,javascript,zend-framework,frontal ]
+---
+<p>Having thought further about <a href="/source/blog/2010/03/frontal-a-new-approach-to-triggering-javascript-behaviour">Frontal, Carl's JS library</a>, I wrote a quick View Helper to make it easier to use it in Zend Framework projects.</p>
+
+<p>It's <a href="http://dl.dropbox.com/u/1845336/Frontal-ZF.tar.gz">available to download</a> on Dropbox, it's available under the MIT licence.  I'll bung it up on somewhere like GitHub once I work out how Git works.</p>
+
+<h4>Basic usage</h4>
+
+<p>Before you do anything you'll need to register the helpers in your <tt>application.ini</tt>:</p>
+
+<code><pre>
+resources.view.helperPath.Frn_View_Helper = /path/to/Frn/View/Helper
+</pre></code>
+
+<p>to get it to output anything you'll need to echo the frontal helper at the bottom of the page:</p>
+
+<code><pre>
+...
+&lt;?= $this->frontal() ?&gt;
+&lt;/body&gt;
+</pre></code>
+
+<p>By default this will echo nothing! Don't panic, it'll start doing things once you've loaded some stuff into it.  The main use-case here is that you're echoing the helper out in some sort of template (Zend_Layout particularly) but pushing configuration into it from your individual views.</p>
+
+<p>Firstly, you can override the path Frontal will use, for instance if there's a page appears under lots of different URLs but you just want one rule that matches it against '/foo':</p>
+
+<code><pre>
+&lt;? $this->frontal->location('/foo'); ?&gt;
+
+will output:
+
+&lt;script&gt;
+$frn.location('/foo');
+&lt;/script&gt;
+</pre></code>
+
+<p>Secondly, you can provide some data that frontal might find useful (rather than dump it in global scope).  The data is auto-converted to JSON so it's a fairly nice way of feeding data from PHP to JS:</p>
+
+<code><pre>
+&lt;? $this->frontal->data(array('foo', 'bar')); ?&gt;
+
+will output:
+
+&lt;script&gt;
+$frn.data(["foo","bar"]);
+&lt;/script&gt;
+</pre></code>
+
+<p>That's pretty much it for now, but it works pretty well and I'm going to be building it into a work project.</p>

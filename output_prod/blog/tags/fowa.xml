@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title><![CDATA[Ciaran McNulty]]></title>
+    <link href="/blog/tags/fowa.xml" rel="self"/>
+    <link href="/"/>
+    <updated>2015-07-05T12:56:28+01:00</updated>
+    <id>/</id>
+        <generator uri="http://sculpin.io/">Sculpin</generator>
+            <entry>
+            <title type="html"><![CDATA[FoWA London 2009 Round-up]]></title>
+            <link href="/fowa-2009-london-round-up"/>
+            <updated>2009-10-06T00:00:00+01:00</updated>
+            <id>/fowa-2009-london-round-up</id>
+            <content type="html"><![CDATA[   <div class="figure narrow">
+
+<a href="http://www.flickr.com/photos/ciaranmcnulty/3986858821/" title="FoWA London by CiaranJMcNulty, on Flickr"><img src="http://farm4.static.flickr.com/3438/3986858821_73ba3fae6c_m.jpg" width="240" height="180" alt="FoWA London" /></a>
+
+</div>
+
+
+
+<p>I was lucky enough to go along to <a href="http://events.carsonified.com/fowa/2009/london/content"><abbr title="The Future of Web Applications">FoWA</abbr></a> this week with a couple of my colleagues, so I thought I'd do a quick round-up of the two days.</p>
+
+<p>I really enjoyed the conference overall - Kensington Town Hall was pretty adequate for the size of conference, the afterparty at Orchid on the Thursday was fairly epic, and the talks left me really energised about the state of web applications in general.  The only slight blot on the whole thing was the terrible state of the WiFi, which was unusable on the first day and pretty flakey the second.</p>
+
+<p>Rather than going through it in strict chronological order I've grouped the talks into broad themes. When the videos turn up online I'll try and link them through.</p>
+
+<h4>Product Demos</h4>
+
+<p>OK so FoWA talks tend to ostensibly be on some abstract theme, but really a hell of a lot are an excuse to show off some tech the speaker is involved in. There were a few that were really impressive.</p>
+
+<h5>280 North</h5>
+
+<img src="http://280north.com/i/280NorthLogoSmall.png" width="160" style="float: right; padding: 0 0 1em 1em; border: 0;" />
+
+<p>This was a prime example.  <a href="http://tolmasky.com/">Francisco Tolmasky</a> from <a href="http://280north.com/">280 North</a> ran through their system for creating online apps, and it's safe to say that it blew the audience's socks off.  <a href="http://objective-j.org/">Cappuccino</a> is a Javascript application framework while <a href="http://280north.com/blog/2009/02/announcing-atlas/">Atlas</a> offers drag-and-drop interface and behaviour design for that framework.  The framework seems incredibly advanced, with pre-built interface elements for windowing and some amazing drag/drop functionality that makes you forget you're in a web environment.</p>
+
+<p>In short, you can pretty much build a whole web application graphically and just write some JS to control how it talks to your server, then export that as a JS/HTML interface.  It's all certainly jaw-dropping, and is already being used to create some real apps like 280 Slides.  Francisco was pretty clear that they've aimed Atlas squarely at the 'online app' end of the market - it's not for generating 'websites' - and from what I've seen the JS it produces degrades gracefully and interfaces with a server back-end really cleanly (essentially via any RESTful interface). </p>
+
+<p>The kicker came when Francisco showed how Atlas now allows you to export your application as a native application for your users to run on their desktops without any significant code changes, allowing them to save to native files instead of remote servers.  Taking it a step further, he showed how a native Mac interface designed in Interface Builder could go the other way, and be imported into Cappuccino as a web interface.  I think that was the point at which my brain switched off and assumed I was dreaming.</p>
+
+<p>I'd strongly recommend a look at <a href="http://280north.com/blog/2009/02/announcing-atlas/">their demo video</a> for a glimpse of the future in that end of the market.  I can certainly see web apps like ours becoming more and more like desktop applications in their interfaces, and the idea that we could write our site and then offer a desktop version with a unified codebase was pretty exciting.</p>
+
+<h5>Ubuntu Enterprise Cloud</h5>
+
+<img src="http://www.ubuntu.com/sites/all/themes/ubuntu09/logo.png" width="160" style="float: right; padding: 0 0 1em 1em; border: 0;" />
+
+<p><a href="http://blog.gardeviance.org/">Simon Wardley</a>, billed as a freelancer, gave a great talk about the future of cloud computing.  He talked about the different types of cloud networks (private vs public) and about how dependencies between service providers can lead to a bit of a domino effect when a cloud vendor goes down.</p>
+
+<p>For example, if someone builds an service on <a href="http://aws.amazon.com/ec2/">EC2</a>, then sells that service to another party who builds an app, who then has end customers, when Amazon has server issues the whole chain fails. His main thrust was that we were in a very early transitional phase from traditional to cloud computing and that to progress we need to have more compatibility between the different cloud platform vendors to allow portability, for instance in the example above maybe some of the webservers were on Amazon and the rest on another service.</p>
+
+<p>To that end he talked about <a href="http://www.ubuntu.com/products/whatisubuntu/serveredition/cloud/UEC">Ubuntu Enterprise Cloud</a> - this is an open source server implementation that's EC2 compatible.  The cool thing there is that you can run your web app on your own server hardware the way you normally do, just with this extra virtualisation layer in place.  Then when your app goes viral and gets digg'd, slashdotted and blogged to death you can quickly duplicate it across EC2 or any other compatible hosted solutions.</p>
+
+<p>It would be good if the existence of this open-source reference implementation helped push the EC2 VM format and APIs towards becoming a de facto standard.  We currently sometimes use some Amazon services at peak load times. It would be interesting to be able to have a mix of local and remote servers and datastores, but treat them all with the same API.</p>
+
+<h5>Facebook and Six Apart</h5>
+
+<img src="http://blogs.ft.com/techblog/files/2009/08/facebook-logo.jpg" width="160" style="float: right; padding: 0 0 1em 1em; border: 0;" />
+<img src="http://upload.wikimedia.org/wikipedia/en/thumb/9/95/Sixapart_logo.svg/295px-Sixapart_logo.svg.png" width="160" style="clear: right; float: right; padding: 0 0 1em 1em; border: 0;" />
+
+<p>Everyone nowadays seems to want to be the gatekeeper for social media, but <a href="http://www.facebook.com">Facebook</a> and <a href="http://sixapart.com">Six Apart</a> both showed their solutions, which are pretty different.</p>
+
+<p><a href="http://www.facebook.com/cat">Cat Lee</a> from Facebook appeared to have been brainwashed as part of her induction.  Her talk was a bit over-corporate and was about on how you can add social functionality to your sites using <a href="http://developers.facebook.com/connect.php">Facebook Connect</a>.  It seems like a decent solution if you're a big site who don't mind 'partnering' with Facebook and accepting lots of their branding, but for a seamless solution it's a complete no-go without your app becoming part of some sort of Facebook ecosystem.</p>
+
+<p>In contrast, the talk from Six Apart showed a similar sort of proposition, but one that's a totally open and free platform.  The <a href=""http://developer.typepad.com/documentation/>TypePad development API</a> they're exposing now can let you accept login from multiple points (including OpenID and even Facebook Connect!), can keep your user's social graphs on their servers, and even store items of content that the users want to share. </p>
+
+<p>This seems ideal for plugging in 'social' functionality to sites without much backend - a good example is <a href="http://www.zacharyquinto.com/">Zachary Quinto's site</a> which is basically a brochure site with some TypePad API stuff dropped in, but it's actually pretty feature-rich for users.  I think the Quinto site, for instance, won't need a database as all the assets, logins, friendships and so forth are kept in TypePad.</p>
+
+<h5>Vodafone Mobile Widgets</h5>
+
+<img src="http://online.vodafone.co.uk/dispatch/Portal/SimpleGetFileServlet?dDocName=VF010304&revisionSelectionMethod=latestReleased&inline=false" width="160" style="clear: right; float: right; padding: 0 0 1em 1em; border: 0;"  />
+
+<p><a href="http://twitter.com/sanjmatharu">Sanj Matharu</a> from <a href="http://vodafone.co.uk">Vodafone</a> was there to show their new mobile applications platform, <a href="http://www.vodafone360.com/en/web/home/index">Vodafone 360</a>, and a guy called Joel Moss from <a href="http://codaset.com/">Codaset</a> went through some of his own experiences developing for it.</p>
+
+<p>The idea for their platform was interesting - apps are basically ZIP files containing HTML, CSS and Javascript that runs the app along with some XML manifests.  The Javascript then gets a lot of the phone's infrastructure exposed to it via a standardised API that presumably irons over all the differences in phone capabilities.  The example app they showed us was a fairly simple battery level monitor, but it's interesting to see that sort of data accessed via Javascript.</p>
+
+<p>The idea is solid, but I have doubts about Vodafone's ability as an operator to push this further.  It's very 'branded' at the moment so maybe other operators would be slow to take it up, but it looks like all the technology involved is portable at least (the application uses the Opera engine to render the apps).</p>
+
+<h5>The Guardian</h5>
+
+<img src="http://i.thisis.co.uk/274079/promoBoxModule/images/655645/657461.jpg" width="160" style="clear: right; float: right; padding: 0 0 1em 1em; border: 0;"  />
+
+<p><a href="http://guardian.co.uk">The Guardian</a> seem to be really committed to joining the online community rather than fighting against it like King Canute or, for instance, Ruper Murdoch.  Chris Thorpe took us through their new initiatives including <a href="http://www.guardian.co.uk/open-platform">open APIs</a> for finding and sharing Guardian content, open datasets of public information the paper has gathered and curated.</p>
+
+<p>He also took us through their recent project for extracting MPs claim expenses from the PDFs they were published in and constructing a system for members of the public to audit and annotate them, flagging up interesting expense claims for review by the journos.  The interesting bit about this project was that it took remarkably few developer days (I think it was about 3 man days in total) and is hosted on EC2 rather than traditional servers.  Apparently it's so far cost only about &#8356;50.</p>
+
+<h4>Building the future</h4>
+
+<p>Aside from (and overlapping with) product demos, at FoWA you get a certain type of talk that's concerned with predicting how the web application industry will go in the future, and talking about coming technologies that will enable that.</p>
+
+<h5>HTML 5</h5>
+
+<img src="http://komplettie.files.wordpress.com/2009/08/opera-logo.jpg?w=300&h=262" width="160" style="clear: right; float: right; padding: 0 0 1em 1em; border: 0;"  />
+
+<p><a href="http://www.brucelawson.co.uk/">Bruce Lawson</a> from <a href="http://www.opera.co.uk">Opera</a> took the stage to demo <a href="http://dev.w3.org/html5/spec/Overview.html">HTML5</a>.  To be honest he didn't go into much that anyone following HTML5's development wouldn't be familiar with but managed to do it in an incredibly engaging and enthusiastic style.  I think most people leaving the talk would have immediately gone and started building stuff in HTML5.
+
+<h5>Javascript frameworks</h5>
+
+<img src="http://sharkenergy.ca/magazine/wp-content/uploads/2009/05/twitter-logo-001.jpg" width="160" style="clear: right; float: right; padding: 0 0 1em 1em; border: 0;"  />
+
+<p><a href="http://www.dustindiaz.com/">Dustin Diaz</a> from <a href="http://twitter.com">Twitter</a> gave a slightly frazzled but fast-paced talk about how awesome Javascript was.  Twitter use jQuery extensively, and he had some great things to say about frameworks in general that I think applied outside of the JS world. </p>
+
+<p>He compared <a href="http://jquery.com">jQuery</a> to cocaine in a fairly longstanding and contrived metaphor, but basically doing a few lines every so often seem great, but if you have a friend who's doing line after line all day long you should take him aside and get him to seek help.</p>
+
+<p>What interested me about Diaz was that he had come into this jQuery organisation but actually had a great pragmatic view of things.  Basically he said that you should use frameworks as the tools they are, for the things they're good at, but keep an eye on the bigger picture and not be afraid to stray outside of the constraints your framework imposes on you.</p>
+
+<h5>Accessiblity</h5>
+
+<img src="http://www.abilitynet.org.uk/images/ab_logo.gif" width="160" style="clear: right; float: right; padding: 0 0 1em 1em; border: 0;"  />
+
+<p><a href="http://twitter.com/usa2day">Robin Christopherson</a> from <a href="http://www.abilitynet.org.uk">AbilityNet</a> spoke to us about accessibility, and to be honest I was ready for a yawnfest.  Accessibility is something that devs in particular can treat as something of a chore.  Quite to the contrary though, he was really interesting!  He took us through some popular sites via a screen reader, and it was evident that some (e.g. Facebook) were not doing a great job for their disabled users.
+
+<p>Robin seemed to have plenty of stats to back up the fact that disabled users are a huge market online who are traditionally sidelined even though they tend to be more active online than 'able-bodied' users.</p>
+
+<p>One thing that was food for thought was his anti-CAPTCHA stance - <a href="http://www.zurb.com/article/285/its-official-captchas-are-bad-for-business">they seem to exclude disabled users while only offering moderate spam catching</a>.  It's certainly worth thinking about whether the cost of looking through spam is less than the cost of the users you exclude!  </p>
+
+<p>Something else I found pretty interesting, being in the industry I am, was he showed us a demo of <a href="http://www.annodex.net/~silvia/itext/elephant_no_skin.html">HTML5 accessible video</a>, with subtitles and audio description kept in sync with the video.</p>
+
+<h5>Ruby on Rails</h5>
+
+<img src="http://blog.eukhost.com/images/rails_logo.jpg" width="160" style="clear: right; float: right; padding: 0 0 1em 1em; border: 0;"  />
+
+<p>As a PHP guy this wasn't of massive interest, but <a href="http://yehudakatz.com/">Yehuda Katz</a> gave a great talk about what to expect in Rails 3, which seems to be the highly successful rival Merb MVC system integrating with Ruby.  What I found most interesting about the talk was the fact he and his partner are doing Pair Programming on Rails, which is very rare in the OSS world.  He seemed to find it pretty valuable and while I'm still suspicious of true pair stuff, it was food for thought.</p>
+
+<h4>Business tips</h4>
+
+<p>Another sort of talk you get at FoWA is of the 'how to build a startup' type.  As a developer these were less relevant, but some still contained some interest.</p>
+
+<h5>Virb</h5>
+
+<img src="http://www.littlepaperplanes.com/virb.jpg" width="160" style="clear: right; float: right; padding: 0 0 1em 1em; border: 0;"  />
+
+<p>The talk from <a href="http://chrislea.com/">Chris Lea</a> from <a href="http://virb.com">Virb</a> was probably the one I got the most from.  Ostensibly about scaling, he was very keen on the idea that developers need to recognise that they're part of real-life businesses, and be more pragmatic.  The most interesting point he made was that a scalable web application isn't one that's had man-hours thrown at it to squeeze out 10% less CPU usage, it's one where the costs of buying more CPU are known, the plan is in place, and the business already knows that the costs will be covered by the increased revenue when expansion happens.</p>
+
+<h5>Digg / Freshbooks</h5>
+
+<img src="http://www.citystyleandliving.com/socialnetworking/digg-logo.png" width="160" style="clear: right; float: right; padding: 0 0 1em 1em; border: 0;"  />
+<img src="http://www.freshbooks.com/images/freshbooks2.gif" width="160" style="clear: right; float: right; padding: 0 0 1em 1em; border: 0;"  />
+
+
+<p><a href="http://kevinrose.com/">Kevin Rose</a> from <a href="http://digg.com">Digg</a>  and <a href="http://www.michaelmcderment.com/">Mike McDerment</a> from <a href="http://freshbooks.com">Freshbooks</a> started things off with separate talks about growing your audience.  Rose's message was one of engagement with the audience, and that's something that Digg do incredibly well. McDerment hammered home the idea that to do that you need to have some really solid metrics and reporting in place to be able to achieve this.  It's easy to leave reporting as low-priority, then spend the next few years of your product cycle eating up the man days producing ad hoc reports.</p>
+
+<h5>Spymaster</h5>
+
+<img src="http://cache0.techcrunch.com/wp-content/uploads/2009/05/picture-77.png" width="160" style="clear: right; float: right; padding: 0 0 1em 1em; border: 0;"  />
+
+<p><a href="http://www.chrisabad.com/">Chris Abad</a> from <a href="http://playspymaster.com/">Spymaster</a> had something like an alternate universe version of the same message, where getting users involved equates to spamifying their friends via Twitter.  I didn't have much time for him but he did have an interesting point about how after a big explosion like they had, you need to take stock of what you've got when the dust settles and think carefully about how to serve your core audience and make the model sustainable (and wow, people still seem to be playing Spymaster - who knew?).</p>
+
+<h5>Revision3</h5>
+
+<img src="http://cybernetnews.com/wp-content/uploads/2008/05/revision-3-logo.jpg" width="160" style="clear: right; float: right; padding: 0 0 1em 1em; border: 0;"  />
+
+<p><a href="http://twitter.com/dlprager">David Prager</a> from <a href="http://revision3.com/">Revision3</a>'s theme was essentially that of the Long Tail where even very specialist interest products can gain an audience but with the twist that once you've succeeded in focussing on a small niche, you can then build on that success in a broader sense. I found this pretty convincing - the paradigmatic examples he used were Facebook (originally a University system) and Digg (originally tech news but now general interest stuff).  Coming from a company that concentrates on some mildly niche industries it was interesting stuff, it got me wondering about what we could do next, once we dominate our space!</p>
+
+<h4>Overall</h4>
+
+<p>Well, that's most of what I can remember from FoWA!  A lot of the rest of the time was spent either playing Xbox or wandering round the few other exhibitors - I was impressed with <a href="http://yahoo.co.uk">Yahoo!</a>'s presence and will certainly consider going along to one of their YDN evenings, <a href="https://www.x.com/blog/">PayPal's new, better API</a> looked pretty neat, and a few of the smaller companies like <a href="http://go-test.it/">Go Test It</a> impressed with the things they were creating.</p>
+
+<p>See you next year!</p>
+]]></content>
+        </entry>
+    </feed>

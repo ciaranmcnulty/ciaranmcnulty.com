@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title><![CDATA[Ciaran McNulty]]></title>
+    <link href="/blog/tags/startrekrank.xml" rel="self"/>
+    <link href="/"/>
+    <updated>2015-07-05T12:56:28+01:00</updated>
+    <id>/</id>
+        <generator uri="http://sculpin.io/">Sculpin</generator>
+            <entry>
+            <title type="html"><![CDATA[Using Twitter as a voting platform]]></title>
+            <link href="/using-twitter-as-a-voting-platform"/>
+            <updated>2009-06-15T00:00:00+01:00</updated>
+            <id>/using-twitter-as-a-voting-platform</id>
+            <content type="html"><![CDATA[<div class="figure narrow">
+<a href="http://www.flickr.com/photos/ciaranmcnulty/3627788423/" title="Cast of Star Trek by CiaranJMcNulty, on Flickr"><img src="http://farm4.static.flickr.com/3406/3627788423_c757c36050_m.jpg" width="240" height="160" alt="Cast of Star Trek" /></a>
+</div>
+
+<p>Like a lot of other people, I've had a love/hate relationship with <a href="http://twitter.com">Twitter</a>.  At first I didn't see the point - it was just <a href="http://facebook.com">Facebook</a> without the features, then I drank the kool-aid, and fell in love with its simplicity and openness.  Nowadays I've backed off a bit and see it as an interesting social phenomenon that I enjoy being a part of. I'd been meaning to check out the <a href="http://framework.zend.com/manual/en/zend.service.twitter.html">Zend_Service_Twitter</a> PHP library for a while, but hadn't really thought of an excuse.</p>
+
+<p>  A few weeks back I was unlucky enough to watch Star Trek V and <a href="http://twitter.com/CiaranMcNulty/status/1981914567">tweeted about how crap it was</a>, despite my friend Nick thinking it's the best of the lot. There was a bit of back and forth, so I posted an order for the films, from best to worst.  A few of my friends then did the same, with the hashtag of #startrekrank as a way of identifying the posts.</p>
+
+<p>It struck me that I could somehow aggregate these results using the Twitter API, so I present to you, <a href="http://startrekrank.com/">StarTrekRank.com</a>!</p>
+
+<p>Actually building the site was pretty straightforward.  The Twitter API combined with the Zend library make it pretty simple to perform searches.  I'm generating the rankings using the <a href="http://en.wikipedia.org/wiki/Condorcet_method#Kemeny-Young_method">Kemeny-Young method</a>, which is fairly processor-intensive - I suspect it's O(n!) for the number of movies - but to my mind produces very fair results.</p>
+
+<p>The way the site operates is to periodically search for #startrekrank via the API, and index any new tweets.  Then if there are some new tweets, the overall ranking is re-calculated automatically.  Finally, the new tweeters get a message sent @them from <a href="http://twitter.com/startrekrank">the 'startrekrank' twitter account</a> thanking them and directing them back to the main site to view the results.</p>
+
+<p>As a voting platform, Twitter is pretty efficient - voters are authenticated via their Twitter account so you know who the votes have come from.  It's only real downside is that a secret ballot isn't very practical. Now clearly this is all just a bit of fluff, but to me it's an interesting illustration of how Twitter's openness and simplicity allow more complex applications to be built on top of it. </p>]]></content>
+        </entry>
+    </feed>
