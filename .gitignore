@@ -1,4 +1,5 @@
 output_dev
+output_prod
 .sculpin
 vendor
 bin

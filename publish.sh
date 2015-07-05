@@ -1,4 +1,8 @@
 ./bin/sculpin generate --env=prod
-git add output_prod
-git commit -m "Publishing"
-git push heroku master
+git branch -D master
+git checkout -b master
+git add -f output_prod
+git commit -m "Publish site"
+git filter-branch --subdirectory-filter output_prod/ -f
+git push origin -f master
+git push heroku -f master
