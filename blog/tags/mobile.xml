@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title><![CDATA[Ciaran McNulty]]></title>
+    <link href="/blog/tags/mobile.xml" rel="self"/>
+    <link href="/"/>
+    <updated>2015-07-05T12:56:28+01:00</updated>
+    <id>/</id>
+        <generator uri="http://sculpin.io/">Sculpin</generator>
+            <entry>
+            <title type="html"><![CDATA[Wag.gd - short URLs with a point]]></title>
+            <link href="/wag-gd-short-urls-with-a-point"/>
+            <updated>2009-12-29T00:00:00+00:00</updated>
+            <id>/wag-gd-short-urls-with-a-point</id>
+            <content type="html"><![CDATA[<p>Short URLs are a bit of a hot-button topic amongst devs - some think they're useful (like <a href="http://rdjs.co.uk/web/Implement-revcanonical-and-become-supercool/4" rel="friend">Russell</a>), some are wary of them (like <a href="http://ciaranmcnulty.com/blog/2009/04/rev-canonical-should-be-handled-with-care" rel="me">me</a>) and some, like my friend <a href="http://pointbeing.net/" rel="friend">Simon</a>, rail against them as a waste of time and resource.</p>
+
+<p>Simon, however, is a sensible sort so rather than just making lots of noise about how they suck, he's gone away and tried to think of a sensible use case, then implemented it.</p>
+
+<p>So take a look over at <a href="http://wag.gd">Wag.gd</a> if you're interested in mobile development.  <a href="http://pointbeing.net/weblog/2009/12/mobile-friendly-short-urls-with-waggd.html">Simon's written about it</a> far better than I could and it's certainly an interesting idea.</p>  ]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Optimising a site for iPhone]]></title>
+            <link href="/optimising-a-site-for-iphone"/>
+            <updated>2008-07-28T00:00:00+01:00</updated>
+            <id>/optimising-a-site-for-iphone</id>
+            <content type="html"><![CDATA[<div class="figure narrow">
+    <a href="http://www.flickr.com/photos/ciaranmcnulty/2709794945/" title="Screengrab of my site on iPhone, on Flickr"><img src="http://farm4.static.flickr.com/3256/2709794945_dfc58b0dcf_m.jpg" width="160" height="240" alt="Screengrab of my site on iPhone" /></a>
+    <p class="caption">The unmodified site</p>
+</div>
+
+<p>The first thing I should probably mention is that yes, despite <a href="http://ciaranmcnulty.com/blog/2008/06/the-iphone-3g-vs-the-nokia-n95">saying I wouldn't</a>, I got an iPhone 3G relatively soon after release.  I'll skip the reasons why for now, that's for a future posting. Naturally the first thing I did upon getting my iPhone was to plug in my own site's URL into the browser and see how it did - you can see the result in the screengrab.</p>
+
+<p>You know what - it's not bad.  The site looks roughly as it should, and with a bit of zooming and panning around all the content is accessible. However, on first load the text isn't really legible and it's not making the best usage of the limited screen space on the iPhone.  Also, the large header graphic makes loading a bit strenuous over an EDGE connection when I'm not in 3G coverage.</p>
+
+<p>Simon has been blogging recently (<a href="http://pointbeing.net/weblog/2008/06/mobilising-a-website-part-1-the-problem.html">here</a> and <a href="http://pointbeing.net/weblog/2008/07/mobilising-a-website-part-2-strategies.html">here</a>), about 'mobilising' websites (and has written a good article on the subject for <a href="http://phparch.com">php|architect</a>) so it's something I've been thinking about lately and I decided to see what it would take to improve the way the page was rendered on iPhone.</p>
+
+<p>It's important to realise that this is a very niche pursuit.  What Simon's series of articles is talking about is enabling a site to be viewed from <em>any</em> mobile device, which is a very different kettle of fish from just making it work better on a fancy-pants iPhone - this is really just for my own edification.</p>
+
+<p>So, the first thing to do was to look through the <a href="http://developer.apple.com/documentation/AppleApplications/Reference/SafariWebContent/Introduction/chapter_1_section_1.html#//apple_ref/doc/uid/TP40002079-SW1">Apple documentation on iPhone web development</a>, which I found was well written and clearly laid out.</p>
+
+<p>The first thing I wanted to do was eliminate a lot of the whitespace on the right of the page.  Adding iPhone-only CSS is done using a CSS3 mechanism called <a href="http://www.w3.org/TR/css3-mediaqueries/">Media Queries</a>.  It's not an Apple-specific technology, it's from the <abbr title="World Wide Web Consortium">W3C</abbr> and is a generic way of applying complex rules as to which stylesheet(s) a specific device should use.</p>
+
+<p>I wrote a phone-specific stylesheet that normalised the column widths to the same as the content area and removed the header image.  The extra markup in the <tt>HEAD</tt> of my document looks like this:</p>
+
+<p><code class="html">
+&lt;link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="/css/iphone.css" />
+</code></p>
+
+<div class="figure narrow">
+    <a href="http://www.flickr.com/photos/ciaranmcnulty/2709902805/" title="My site on iPhone (better) by CiaranJMcNulty, on Flickr"><img src="http://farm4.static.flickr.com/3013/2709902805_55a284eab1_m.jpg" width="160" height="240" alt="My site on iPhone (better)" /></a>
+    <p class="caption">Reduced to 1 column</p>
+</div>
+
+<p>This says the specified stylesheet should only apply to devices that support Media Queries, consider themselves 'screen' devices, and have a screen width of less than 480 pixels.  This obviously applies to the iPhone, but hopefully more and more user agents will support Media Queries - they're a very powerful mechanism for specifying how a site should display on devices with a hugely varied range of capabilities.</p>
+
+<p>With the new CSS applied for iPhone, the site started to take shape.  The content was all in a nice vertical column, but the phone still wasn't displaying the page zoomed-in enough.</p>
+
+<p>One solution would be to change all of the page's sizings in CSS so that it fitted into the iPhone's default 980px-wide zoom level, but this seemed a bit messy as the extra CSS was so far fairly small and clean.</p>
+
+<p>Apple's solution to this a <tt>META</tt> tag to the <tt>HEAD</tt> of your document that specifies what zoom level to use on load.  My content was 516px wide so mine looks like this:</p>
+
+<p><code class="html">
+&lt;meta name="viewport" content="width=516" /&gt;
+</code></p>
+
+<p>You can do a lot with this <tt>META</tt> tag, such a disabling user zoom, but frankly I think it's a horrible solution. </p>
+
+<p>It lacks the granularity of something like Media Queries, so you're left specifying one common viewport for all 'viewport-aware' devices.  Hopefully there will be some way of specifying viewport dimensions in the stylesheet in future, or that I've missed something.</p>
+
+
+<div class="figure narrow">
+    <a href="http://www.flickr.com/photos/ciaranmcnulty/2710607314/" title="My site on iPhone (optimised) by CiaranJMcNulty, on Flickr"><img src="http://farm4.static.flickr.com/3189/2710607314_e023043dd5_m.jpg" width="160" height="240" alt="My site on iPhone (optimised)" /></a>
+    <p class="caption">The final version</p>
+</div>
+
+<p>With this extra bit of information, Safari is now able to render the site in a much more usable form.  The single-column means only a vertical scroll is needed, with the sidebar items relegated to the bottom of the screen.  The text is legible from the offset, and the loading times are severely reduced.</p>
+
+<p>Obviously this is only a simple example, but hopefully it illustrates how a couple of simple steps that you can make fairly harmlessly to your markup, can vastly improve the browsing experience for the iPhone users amongst your audience.</p>  
+
+<p>Whether it's worth the effort for your site is a cost/benefit analysis you'll need to make for yourself, but I strongly believe that technologies like Media Queries will become more and more useful in future, as the current separation between 'computer' and 'mobile' browsers breaks down into a continuous spectrum of PCs, tablets, PDAs and tiny embedded browsers with a massive range of capabilities.</p>]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[The iPhone 3G vs the Nokia N95]]></title>
+            <link href="/the-iphone-3g-vs-the-nokia-n95"/>
+            <updated>2008-06-12T00:00:00+01:00</updated>
+            <id>/the-iphone-3g-vs-the-nokia-n95</id>
+            <content type="html"><![CDATA[<p>A few days ago, Apple launched their much-anticipated second revision of the iPhone.  Key amongst its new features are 3G (HSPDA) connectivity and a GPS unit.</p>
+
+<div class="figure">
+<a href="http://flickr.com/photos/anwer/2567778438" title="Larger version of the photo, on Flickr"><img src="http://farm4.static.flickr.com/3120/2567778438_c25718cfe6.jpg" width="480" height="270" alt="Steve Jobs announcing the 3G iPhone"/></a>
+<p class="caption">Steve Jobs announcing the 3G iPhone</p>
+</div>
+
+<p>As a loyal Nokia user as well as a Mac enthusiast, my loyalty was therefore pretty divided.  I was saved from flocking towards the first generation iPhone's hype machine by a reflex reaction of 'if it's not got 3G it can't be any good' and a recent iPod purchase to be bitter about.</p>
+
+<p>I've been happy enough with my iPod and N95 sitting next to each other in my pocket, but the question I've been mulling over the last few days is, would I be happier with one iPhone instead?</p>
+
+<p>I've come to the conclusion that no, the iPhone is not yet right for me, for the following reasons:</p>
+
+<ul>
+<li>
+<p><strong>Apple 'approval' for third-party apps</strong></p>
+<p>Apple are launching an SDK for iPhone but are insisting that they get to digitally sign every app that runs on it.  The Symbian platform my N95 runs is pretty open - any hobbyist can decide to write a bit of software for it and make it available for download. This has given me access to so many quirky little applications, from Emulators to diet trackers to location sensors - I really can't see the same ecosystem flourishing around iPhone.</p>
+</li>
+<li>
+<p><strong>No MMS</strong></p>
+<p>This is a fairly bizarre omission for a modern cellphone.  Admittedly I can count the number of MMS I've sent this year on one hand, but I have sent some and I've received a few as well.  I can only presume that people in the US don't use the things, but seriously Apple, WTF?</p>
+</li>
+<li>
+<p><strong>Mediocre camera</strong></p>
+<p>2 Megapixels is ok, but I want my phone to be able to fill the breech when I've forgotten to bring my point-and-shoot camera out with me the way my 5Mpix Zeiss-lensed N95 does.  The lack of a user-facing camera has set the cause of video calls/chat back a few years but is less vexing.</p>
+</li>
+<li>
+<p><strong>No modem functionality</strong></p>
+<p>It seems that if you own an iPhone, you have a dial-up device capable of connecting to the Internet at near-broadband speeds, but no way of using that via laptop.  In short, that's retarded.</p>
+<p>When I go away I use my N95 with my MacBook Pro and browse the web at a pretty respectable 1.4Mbit - the idea that an Apple mobile is less capable of talking to my Mac than my Nokia phone is makes me cringe.</p>
+</li>
+</ul>
+
+<p>This might not seem like much, but I can't bring myself to take a step backwards and get an iPhone that can't do some of the things my existing setup does.</p>
+
+<p>It's my fond hope that the third-party iPhone development community flourishes, however, and manages to fill in all these gaps well enough.  I'm unsure how much the API exposes and whether MMS etc. are within the realms of realistic hope, but you never know.</p>
+
+<div class="figure">
+<a href="http://flickr.com/photos/n96/2261041913/" title="Larger version of the photo, on Flickr"><img src="http://farm3.static.flickr.com/2351/2261041913_c98cb1a773.jpg" width="500" height="341" alt="N96 product image"/></a>
+<p class="caption">The N96, coming soon</p>
+</div>
+
+<p>In the meantime the N96 is out around August time, and that's what I'm pinning my hopes on.  It does everything my N95 does, and does it in a neater casing and on faster hardware.</p>]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Fire Eagle - Yahoo&#039;s location service]]></title>
+            <link href="/fire-eagle-yahoos-location-service"/>
+            <updated>2008-05-12T00:00:00+01:00</updated>
+            <id>/fire-eagle-yahoos-location-service</id>
+            <content type="html"><![CDATA[<p>Yahoo! recently launched a beta of their <a href="http://fireeagle.yahoo.com">new Fire Eagle service</a> and thanks to the kindness of <a href="http://pointbeing.net">Simon</a> I managed to snag an invite code.</p>
+
+<div class="figure">
+<a href="http://www.flickr.com/photos/ciaranmcnulty/2485972137/" title="Larger version of the screengrab, on Flickr"><img src="http://farm4.static.flickr.com/3157/2485972137_846e936eea.jpg" width="500" height="403" alt="Screen grab of the main Fire Eagle page"/></a>
+<p class="caption">The main Fire Eagle page</p>
+</div>
+
+<p>The simple concept behind Fire Eagle is that it's a web service that stores your geographical location.  That's it. There are no other fancypants features to get in the way of the central message, everything else is left as an exercise for third parties.</p>
+
+<p>Like Twitter, Fire Eagle straddles a blurry line between a website and an API.  The site itself offers very little - a box to write your location in, and a map showing the last known location (see picture).</p>
+
+<p>In my eyes, the real strength of Fire Eagle is the way it treats third-party applications.  An application can be registered with Fire Eagle using <a href="http://en.wikipedia.org/wiki/OAuth">OAuth</a>, which means applications can set and read your location without you having to trust them with your Fire Eagle login details.</p>
+
+<p>Because you've not given the application your full login details, its access to your data can be revoked at any time.  I can revoke a service's access to my data, or set the accuracy of the data it recieves to something much coarser (for example, I can say a particular service can only read my location to City level).</p>
+
+<div class="figure">
+<a href="http://www.flickr.com/photos/ciaranmcnulty/2486911244/" title="Larger version of the screengrab, on Flickr"><img src="http://farm3.static.flickr.com/2390/2486911244_16957af614.jpg" width="500" height="379" alt="Screen grab of the Fire Eagle application permissions page"/></a>
+<p class="caption">Fire Eagle application permissions page</p>
+</div>
+
+<p>Because of this flexibility, Fire Eagle has almost overnight become the de facto platform for services who want to leverage user locations.  The clear and rich API has meant most of the existing web-based 'where am I' services have very rapidly knocked up pipes to and from their databases into Fire Eagle, and a whole ecosystem of services built on top of it is starting to thrive.</p>
+
+<p>A good example of a service that feeds to Fire Eagle is <a href="http://www.navizon.com/">Navizon</a> who offer a free Symbian client that regularly updates your position from your handset based on cell tower ID, local wi-fi hotspots and GPS, if available on the handset. Walking around all day with Navizon running felt a bit strange (and certainly ran my battery down).  Although I knew that only I could log into Fire Eagle and see my location exactly, my trip around London is still sitting on some Yahoo! server somewhere.</p>
+
+<p>As a test of how clean the API was, I tried to knock up a bit of code that took my location and displayed it online.  All in all it took about 30 mins to convert their PHP example code with something I was happy with.  I may add it to my site at some point - obviously I would want to restrict it to a coarse location if I'm publishing it publicly!</p>]]></content>
+        </entry>
+    </feed>

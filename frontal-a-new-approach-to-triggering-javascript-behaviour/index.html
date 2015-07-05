@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Frontal - a new approach to triggering Javascript behaviour &mdash; Ciaran McNulty</title>
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="/main.css?v=1" />
+    <!--[if gt IE 7]><!-->
+    <link rel="stylesheet" href="/layout.css?v=1" />
+    <!--<![endif]-->
+    <link rel="openid.server" href="http://www.livejournal.com/openid/server.bml" />
+    <link rel="openid.delegate" href="http://ciaranmcnulty.livejournal.com" />
+</head>
+<body>
+
+    <header>
+        <h1><a href="/">Ciaran McNulty</a></h1>
+    </header>
+
+    <section id="blog">
+    <h2>Frontal - a new approach to triggering Javascript behaviour</h2>
+
+    <h3><time>25th March 2010</time></h3>
+
+    <p>My friend <a href="http://sweetnr.com">Carl</a> has just released <a href="http://sweetnr.com/70">a really interesting Javascript library called Frontal</a>.  I've had a night to sleep on it and thought I'd share my thoughts.</p>
+
+<p>The key problem Frontal addresses is <em>'some Javascript needs to be run only on some pages'</em>.  There are a few different approaches to this:</p>
+
+<h4>Per-page scripts</h4>
+
+<p>The first approach is to have lots of Javascripts that only apply for the current page, and insert them in the HEAD of the document:</p>
+
+<code><pre>
+&lt;head&gt;
+  &lt;script src="base.js"&gt;&lt;/script&gt;
+  &lt;script src="something-page-specific.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+</pre></code>
+
+<p>Pros:</p>
+<ul>
+<li>You can attach your scripts modularly</li>
+<li>No inline scripts</li>
+</ul>
+
+<p>Cons:</p>
+<ul>
+<li>Lots of JS files to keep track of</li>
+<li>Lots of HTTP requests to your server</li>
+<li>Each page's JS isn't precached</li>
+<li>No way of passing parameters to the script, everything has to be hard-coded</li>
+</ul>
+
+<h4>Inline triggers</h4>
+
+<p>A second approach is to have some base library but then activate with some inline script in your page:</p>
+
+<code><pre>
+&lt;head&gt;
+  &lt;script src="base.js"&gt;&lt;/script&gt;
+  [...]
+&lt;/head&gt;
+&lt;body&gt;
+  [...]
+  &lt;script&gt;
+    doSomeBehaviour('foo', 'bar');
+  &lt;/script&gt;
+&lt;/body&gt;
+</pre></code>
+
+<p>Pros:</p>
+<ul>
+<li>One JS that's easily cached</li>
+<li>Triggered functionality per-page</li>
+</ul>
+
+<p>Cons:</p>
+<ul>
+<li>Mixes JS with HTML</li>
+</ul>
+
+<h4>POSH triggering</h4>
+
+<p>This third approach is one I've preferred to use in the past is to have the Javascript pick up elements that exist in the markup in some sort of <a href="http://microformats.org/wiki/posh">POSH</a> form.</p>
+
+<code><pre>
+&lt;head&gt;
+  &lt;script src="base.js"&gt;&lt;/script&gt;
+  [...]
+&lt;/head&gt;
+&lt;body&gt;
+  [...]
+  &lt;div id="foo"&gt;
+    &lt;span class="bar"&gt;An element&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+</pre></code>
+
+In this instance the base.js would pick up that there's an element with @id="foo" and do some action based on it (or rather, attach some behaviour).
+
+<p>Pros:</p>
+<ul>
+<li>One JS that's easily cached</li>
+<li>JS only applies when needed</li>
+</ul>
+
+<p>Cons:</p>
+<ul>
+<li>Lots of findById() to check every possible element that might trigger a behaviour</li>
+<li>Can only apply after DOM is ready</li>
+</ul>
+
+<h4>The Frontal approach - path-based actions</h4>
+
+<p>What frontal does quite simply and brilliantly is allow you to specify Javascript that gets run based on the URL of the current script:</p>
+
+<code><pre>
+$frn('/blog', function(){
+   // some blog-specific action
+});
+
+$frn('/news/latest', function(){
+   // e.g. script that refreshes the list of news items
+});
+
+$frn(/blog\/.*zend.*/, function(){
+   // action for blog items with Zend in the URL
+});
+</pre></code>
+
+I find this approach really interesting, and would be pretty keen to see how it can be integrated with your average framework's routing mechanism (specifically ZF and the URL view helper).
+
+<p>Pros:</p>
+<ul>
+<li>One big JS</li>
+<li>JS only applied on pages where it's needed</li>
+</ul>
+
+<p>Cons:</p>
+<ul>
+<li>Page-specific JS might not be fine-grained enough</li>
+<li>Need to link to Frontal as a library to use (unless you replicate the pattern)</li>
+</ul>
+
+<h4>Looking forward</h4>
+
+<p>At first glance I tend to think that a mixed strategy of the Frontal and POSH approaches - I still tend to think that JS should get as much of the 'stuff' it needs to understand from POSH-esque structures within the page (e.g. a Google Map probably shouldn't have it's coordinates hardcoded in the JS). However it does get costly to keep traversing the DOM, and you can't always wait for the DOM to be available, so there's a strong argument for combining that with Frontal and nesting the POSH checking inside Frontal clauses.</p>
+
+<p>I'm going to keep nagging Carl about getting this integrated into a Zend project, and would like to see it bundled into a jQuery plugin.</p>
+
+</section>
+
+</body>
+
+</html>

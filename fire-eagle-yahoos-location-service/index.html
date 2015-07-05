@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Fire Eagle - Yahoo&#039;s location service &mdash; Ciaran McNulty</title>
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="/main.css?v=1" />
+    <!--[if gt IE 7]><!-->
+    <link rel="stylesheet" href="/layout.css?v=1" />
+    <!--<![endif]-->
+    <link rel="openid.server" href="http://www.livejournal.com/openid/server.bml" />
+    <link rel="openid.delegate" href="http://ciaranmcnulty.livejournal.com" />
+</head>
+<body>
+
+    <header>
+        <h1><a href="/">Ciaran McNulty</a></h1>
+    </header>
+
+    <section id="blog">
+    <h2>Fire Eagle - Yahoo&#039;s location service</h2>
+
+    <h3><time>12th May 2008</time></h3>
+
+    <p>Yahoo! recently launched a beta of their <a href="http://fireeagle.yahoo.com">new Fire Eagle service</a> and thanks to the kindness of <a href="http://pointbeing.net">Simon</a> I managed to snag an invite code.</p>
+
+<div class="figure">
+<a href="http://www.flickr.com/photos/ciaranmcnulty/2485972137/" title="Larger version of the screengrab, on Flickr"><img src="http://farm4.static.flickr.com/3157/2485972137_846e936eea.jpg" width="500" height="403" alt="Screen grab of the main Fire Eagle page"/></a>
+<p class="caption">The main Fire Eagle page</p>
+</div>
+
+<p>The simple concept behind Fire Eagle is that it's a web service that stores your geographical location.  That's it. There are no other fancypants features to get in the way of the central message, everything else is left as an exercise for third parties.</p>
+
+<p>Like Twitter, Fire Eagle straddles a blurry line between a website and an API.  The site itself offers very little - a box to write your location in, and a map showing the last known location (see picture).</p>
+
+<p>In my eyes, the real strength of Fire Eagle is the way it treats third-party applications.  An application can be registered with Fire Eagle using <a href="http://en.wikipedia.org/wiki/OAuth">OAuth</a>, which means applications can set and read your location without you having to trust them with your Fire Eagle login details.</p>
+
+<p>Because you've not given the application your full login details, its access to your data can be revoked at any time.  I can revoke a service's access to my data, or set the accuracy of the data it recieves to something much coarser (for example, I can say a particular service can only read my location to City level).</p>
+
+<div class="figure">
+<a href="http://www.flickr.com/photos/ciaranmcnulty/2486911244/" title="Larger version of the screengrab, on Flickr"><img src="http://farm3.static.flickr.com/2390/2486911244_16957af614.jpg" width="500" height="379" alt="Screen grab of the Fire Eagle application permissions page"/></a>
+<p class="caption">Fire Eagle application permissions page</p>
+</div>
+
+<p>Because of this flexibility, Fire Eagle has almost overnight become the de facto platform for services who want to leverage user locations.  The clear and rich API has meant most of the existing web-based 'where am I' services have very rapidly knocked up pipes to and from their databases into Fire Eagle, and a whole ecosystem of services built on top of it is starting to thrive.</p>
+
+<p>A good example of a service that feeds to Fire Eagle is <a href="http://www.navizon.com/">Navizon</a> who offer a free Symbian client that regularly updates your position from your handset based on cell tower ID, local wi-fi hotspots and GPS, if available on the handset. Walking around all day with Navizon running felt a bit strange (and certainly ran my battery down).  Although I knew that only I could log into Fire Eagle and see my location exactly, my trip around London is still sitting on some Yahoo! server somewhere.</p>
+
+<p>As a test of how clean the API was, I tried to knock up a bit of code that took my location and displayed it online.  All in all it took about 30 mins to convert their PHP example code with something I was happy with.  I may add it to my site at some point - obviously I would want to restrict it to a coarse location if I'm publishing it publicly!</p></section>
+
+</body>
+
+</html>
