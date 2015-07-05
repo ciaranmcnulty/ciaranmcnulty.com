@@ -1,0 +1,18 @@
+language: php
+php:
+  - hhvm
+sudo: false
+branches:
+  only:
+    - source
+cache:
+  directories:
+    - $HOME/.composer/cache
+before_script:
+  - git config --global user.email 'mail@ciaranmcnulty.com'
+  - git config --global user.name 'Ciaran McNulty (bot)'
+  - composer install --prefer-dist
+script:
+  - sh publish.sh
+after_success:
+  - git push origin -f master
