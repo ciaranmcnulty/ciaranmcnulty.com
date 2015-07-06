@@ -25,7 +25,7 @@ a sensible way to describe them until [Jason](http://github.com/thecrimpmaster) 
 $this->beConstructedThrough('named', ['Ciaran']);
 ```
 
-This describes a class that has somethng like the following implementation of a static class:
+This describes a class that has something like the following implementation of a static class:
 
 ```php
 public static function named($name)
@@ -69,7 +69,7 @@ Another new addition is that when generating a named constructor, you will be as
 Do you want me to make the constructor of CLASS private for you? [Y/n]
 ```
 
-When answering yes a private `__construct` is generated, meaning the named constructor must be used to create instances of the obectk.
+When answering yes a private `__construct` is generated, meaning the named constructor must be used to create instances of the object.
 
 # Describing constructor failure in 2.2.x
 
@@ -112,5 +112,3 @@ class. Thanks to [Shane](https://github.com/shanethehat) it's now placed up fron
 
 This is the sort of small change that takes a big effort to implement, so thanks Shane and all the other contributors who've
 made this release great.
-
-
