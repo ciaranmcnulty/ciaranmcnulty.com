@@ -1,18 +1,23 @@
 language: php
 php:
-  - hhvm
+- hhvm
 sudo: false
 branches:
   only:
-    - source
+  - master
 cache:
   directories:
-    - $HOME/.composer/cache
+  - $HOME/.composer/cache
+before_install:
+- echo -e "machine github.com\n login $GH_TOKEN" >> ~/.netrc
 before_script:
-  - git config --global user.email 'mail@ciaranmcnulty.com'
-  - git config --global user.name 'Ciaran McNulty (bot)'
-  - composer install --prefer-dist
+- git config --global user.email 'mail@ciaranmcnulty.com'
+- git config --global user.name 'Ciaran McNulty (bot)'
+- composer install --prefer-dist
 script:
-  - sh publish.sh
+- sh publish.sh live
 after_success:
-  - git push "https://github.com/ciaranmcnulty/ciaranmcnulty.com.git" -f master
+- git push "https://github.com/ciaranmcnulty/ciaranmcnulty.com.git" -f live
+env:
+  global:
+    secure: "eVWKEw4zLJHqZg5Y7Co81TIb2M9OVlFqWE5nBkMpGOfRGs0Ukbucvw5hH6+dRvW8ujpTOKinQ72sh4ebWpp+CRr0oDyzvKLmnf+5kAHUzNFJN1QGL3r6NfSktXUwicUYirYF19GxVVJejcRAksBat8coT1u/GhRjJstsxyBHk1Y="
