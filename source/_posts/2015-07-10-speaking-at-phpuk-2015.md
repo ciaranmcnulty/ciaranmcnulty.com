@@ -1,6 +1,5 @@
 ---
 title: Speaking at PHPUK 2015
-draft: true
 tags: [ php, conference, phpuk, talks]
 ---
 
