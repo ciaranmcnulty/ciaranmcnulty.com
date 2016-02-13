@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title><![CDATA[Ciaran McNulty]]></title>
+    <link href="/blog/tags/phpspec" rel="self"/>
+    <link href="/"/>
+    <updated>2016-02-13T09:34:57+00:00</updated>
+    <id>/</id>
+        <generator uri="http://sculpin.io/">Sculpin</generator>
+            <entry>
+            <title type="html"><![CDATA[Testing Constructors with PhpSpec 2.3]]></title>
+            <link href="/testing-constructors-with-phpspec-2"/>
+            <updated>2015-07-06T00:00:00+00:00</updated>
+            <id>/testing-constructors-with-phpspec-2</id>
+            <content type="html"><![CDATA[<p>At the weekend I tagged the first (hopefully only) beta release of PhpSpec 2.3.0. You can see the <a href="https://github.com/phpspec/phpspec/releases/tag/2.3.0-beta">details of the release here</a></p>
+
+<p>Several of the features relate to constructors, so I thought it was worth going through the differences to how you deal with
+constructors when specifying classes.</p>
+
+<h1>Describing construction in 2.2.x</h1>
+
+<p>Since the 2.0 release you have always been able to describe simple constructors:</p>
+
+<pre><code class="php">$this-&gt;beConstructedWith(100, 'param');
+</code></pre>
+
+<p>This works fine when describing <code>__construct</code> but a common pattern nowadays is to use Named Constructors. We did not have
+a sensible way to describe them until <a href="http://github.com/thecrimpmaster">Jason</a> added a neat syntax for doing this version 2.2.0:</p>
+
+<pre><code class="php">$this-&gt;beConstructedThrough('named', ['Ciaran']);
+</code></pre>
+
+<p>This describes a class that has something like the following implementation of a static class:</p>
+
+<pre><code class="php">public static function named($name)
+{
+    $user = new User();
+    $user-&gt;name = $name;
+
+    return $user;
+}
+</code></pre>
+
+<p>Which allows the more readable:</p>
+
+<pre><code class="php">$user = User::named('Ciaran');
+</code></pre>
+
+<p>This opened up a lot of possibilities but there were a few issues:</p>
+
+<ol>
+<li>The public constructor still existed (Jason's original PR actually handled this but for some reason I got him to remove it).</li>
+<li>From observing people using the tool, it became apparent that using an array of parameters caused confusion.</li>
+<li>There was no sensible way of testing named constructors throwing Exceptions (e.g. when guarding invariants)</li>
+</ol>
+
+<h1>Describing constructors in 2.3.0</h1>
+
+<p>You can now describe named constructors using a shortcut syntax:</p>
+
+<pre><code class="php">$this-&gt;beConstructedNamed('Ciaran');
+</code></pre>
+
+<p>This is the equivalent of the case above, without the need to pass the arguments as an array. In short anything matching
+<code>beConstructed*()</code> or <code>beConstructedThrough*()</code> are converted to an equivalent <code>beConstructedThrough()</code> call.</p>
+
+<p>The aim of this is to make the specs more readable - the cost is that there is now more than one way of specifying these things.
+Time will tell whether this works or not.</p>
+
+<p>Another new addition is that when generating a named constructor, you will be asked:</p>
+
+<pre><code>Do you want me to make the constructor of CLASS private for you? [Y/n]
+</code></pre>
+
+<p>When answering yes a private <code>__construct</code> is generated, meaning the named constructor must be used to create instances of the object.</p>
+
+<h1>Describing constructor failure in 2.2.x</h1>
+
+<p>Until now, it's only been possible to test a constructor that throws an exception by explicitly invoking it:</p>
+
+<pre><code class="php">$this-&gt;shouldThrow('InvalidArgumentException')-&gt;during('__construct', ['']);
+</code></pre>
+
+<p>This suffers the same problems that <code>beConstructedThrough</code> had - mostly people forgetting to put single arguments inside
+an array.</p>
+
+<p>It was vaguely dissatisfying that you tested the constructor by invoking it, and potentially had to repeat the arguments
+again, even if you'd called <code>beConstructedWith</code>. Worse, there was no sensible way to specify a static constructor
+throwing an argument.</p>
+
+<h1>Describing constructor failure in 2.3.0</h1>
+
+<p>Thanks to <a href="https://github.com/acasademont">Albert</a> we have a new syntax specifically for describing this sort of exception
+that does not care what the construction method used was:</p>
+
+<pre><code class="php">$this-&gt;beConstructedWith(-100);
+$this-&gt;shouldThrow('InvalidArgumentException')-&gt;duringInstantiation();
+</code></pre>
+
+<p>or</p>
+
+<pre><code class="php">$this-&gt;beConstructedNamed('InvalidName');
+$this-&gt;shouldThrow('InvalidArgumentException')-&gt;duringInstantiation();
+</code></pre>
+
+<p>For me this is much clearer, and really helps with the clarity of the specs.</p>
+
+<h1>One last thing...</h1>
+
+<p>Something that's bugged me for years is that when PhpSpec generates a constructor method it does so at the end of the
+class. Thanks to <a href="https://github.com/shanethehat">Shane</a> it's now placed up front in the class!</p>
+
+<p>This is the sort of small change that takes a big effort to implement, so thanks Shane and all the other contributors who've
+made this release great.</p>
+]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[A Quick Profile of PhpSpec Using Blackfire.IO]]></title>
+            <link href="/a-quick-profile-of-phpspec"/>
+            <updated>2014-12-04T00:00:00+00:00</updated>
+            <id>/a-quick-profile-of-phpspec</id>
+            <content type="html"><![CDATA[<p>In a guest blog for Sensio Labs, I have written a little about <a href="http://blog.blackfire.io/a-quick-profile-of-phpspec.html">using blackfire.io to profile PhpSpec</a></p>
+]]></content>
+        </entry>
+    </feed>

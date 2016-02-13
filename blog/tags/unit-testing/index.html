@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title><![CDATA[Ciaran McNulty]]></title>
+    <link href="/blog/tags/unit-testing" rel="self"/>
+    <link href="/"/>
+    <updated>2016-02-13T09:34:57+00:00</updated>
+    <id>/</id>
+        <generator uri="http://sculpin.io/">Sculpin</generator>
+            <entry>
+            <title type="html"><![CDATA[Faster failing Unit Tests]]></title>
+            <link href="/faster-failing-unit-tests"/>
+            <updated>2012-02-08T00:00:00+00:00</updated>
+            <id>/faster-failing-unit-tests</id>
+            <content type="html"><![CDATA[<p>One of the things about unit tests is that if they're going to fail, it's best if they fail quickly.
+
+<p>(This is also a key element of Scrum and other Agile approaches - if you're going to fail, do it as early as possible).
+
+<p>I was listening to <a href="http://www.se-radio.net/2010/09/episode-167-the-history-of-junit-and-the-future-of-testing-with-kent-beck/">this old episode of Software Engineering Radio</a> and in it Kent Beck made the following observations:
+
+<ol>
+<li>Ideally you want to run the tests most likely to fail first, so that you get faster feedback
+<li>Statistically the most likely tests to fail are the ones that failed recently (i.e. if a test hasn't failed for a while it's less likely to fail next time).
+</ol>
+
+<p>This really clicked with me, especially for things like CI, so I knocked up the following hacky script to run my phpunit tests through:
+
+<p><code><pre>
+&lt;?php
+
+$run_full = true;
+
+if (file_exists('last_run_report.xml')) {
+    
+    $failures = array();
+    $xml = simplexml_load_file('last_run_report.xml');
+    
+    if ($res = $xml-&gt;xpath('//error/../@file')) {
+        foreach ($res as $file) {
+            $failures[] = (string)$file;
+        }
+    }
+
+    if ($failures) {
+        echo 'PREVIOUSLY FAILING TESTS', PHP_EOL;
+        echo '------------------------', PHP_EOL;
+        passthru('phpunit '.join(' ', $failures), $exit);
+        
+        if ($exit &gt; 0) { 
+            $run_full = false; 
+        }
+        else {
+            echo PHP_EOL;
+            echo 'FULL TEST SUITE', PHP_EOL;
+            echo '---------------', PHP_EOL;
+        }
+    }
+}
+
+if($run_full){
+    passthru('phpunit --log-junit last_run_report.xml');
+}
+</pre></code></p>
+
+<p>When I use this to run my test suite instead of straight phpunit, it results in a local file called last_run_report.xml being generated. Next time I run the report, if there were any errors, the report is parsed and the failing tests are executed first.
+
+<p>This is <em>really primitive</em> but is already saving me a little time. The next step would be to get a DB involved and maybe log the last few executions of the current suite, to get some stats on how unstable tests have been over the last few executions and prioritise them that way.
+
+<p>I'm sure there's a bunch of other analysis you could do to work out statistically which tests are likely to fail - you could even do some sort of static code analysis and work out which tests have ben potentially impacted since the last test run.
+
+<p>I'll be running this little script locally for now, but with an eye to including it in our CI environment once I've a bit more confidence that it's a valid approach.]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Using partial mocks in PHPUnit to test tricky code]]></title>
+            <link href="/using-partial-mocks-in-phpunit-to-test-tricky-code "/>
+            <updated>2011-04-30T00:00:00+00:00</updated>
+            <id>/using-partial-mocks-in-phpunit-to-test-tricky-code </id>
+            <content type="html"><![CDATA[<p>At work we've been going through the fairly painful process of adding unit tests to existing code. I'd like to share one technique I've found useful, a way of testing methods that at first glance look like they have too many dependencies to easily get under test.
+
+<p>I'll be giving these examples in PHPUnit but any xUnit framework should be able to do something similar.
+
+<p>Consider a method like the following, which is the sort of thing you might have trouble seeing how to test:
+
+<p><code><pre>
+class MyClass
+{
+    public function getDataAndPublishRemotely()
+    {
+        $data = DataStore::getUnpublishedData();
+        
+        $service = new SoapClient($SOME_WSDL);
+        $service-&gt;publish(preg_replace('/[^0-9a0z]+/', '', $data));
+    }
+} 
+</pre></code></p>
+
+<p>So this is doing some sort of DB call, then calling a SOAP service and publishing a cleaned-up version of the result. What makes this hard to test is the fact it's got two solid dependencies - a static call to some sort of DataStore layer and a direct instance of a SoapClient class.
+
+<p>Eventually the way to fix this sort of thing is to inject both of those dependencies separately, but that's too big a refactoring to tackle straight away. When you're modifying a class to get it under test you want to do small, easy-to-understand changes and get it under test ASAP.
+
+<p>One approach to getting it tested is to split the functionality that you think you can test into a separate method, like so:
+
+<p><code><pre>
+class MyClass
+{
+    public function getDataAndPublishRemotely()
+    {
+        $data = DataStore::getUnpublishedData();
+        $cleanData = $this-&gt;processData($data);
+        
+        $service = new SoapClient($SOME_WSDL);
+        $service-&gt;publish($cleanData);
+    }
+    
+    public function processData($data)
+    {
+        return preg_replace('/[^0-9a0z]+/', '', $data);
+    }
+}
+</pre></code></p>
+
+<p>Testing that functionality becomes pretty simple:
+
+<p><code><pre>
+class MyClassTest extends PHPUnit_Framework_Testcase
+{
+    public function testProcessData()
+    {
+        $data = ' hel123lo wo00rld    ';
+        $class = new MyClass();
+        
+        $result = $class-&gt;processData();
+        
+        $this-&gt;assertSame('hello world', $data);
+    }
+}
+</pre></code></p>
+
+<p>However there are a few things wrong with this approach, in my opinion. The first is that the new method has had to be public to be tested, so we've fundamentally changed the API of the class just for testing. The second is that we're not actually running the method we started off trying to test, which is unsatisfying. Thirdly, we're not aware whether the method is accessing the datastore or soap service at all, we're only testing the small bit of functionality we split off.
+
+<p>A better refactoring of the original class is to instead of splitting out the bits easy to test, split out the bits that are hard to test like so:
+
+<p><code><pre>
+class MyClass
+{
+    public function getDataAndPublishRemotely()
+    {
+        $data = $this-&gt;_getUnpublishedDataFromDatastore();
+        $cleanData = preg_replace('/[^0-9a0z]+/', '', $data);
+        $this-&gt;_publishDataRemotely($cleanData);
+    }
+    
+    protected function _getUnpublishedDataFromDatastore()
+    {
+        return DataStore::getUnpublishedData();
+    }
+    
+    protected function _publishDataRemotely($data)
+    {
+        $service = new SoapClient($SOME_WSDL);
+        $service-&gt;publish($data);
+    }
+}
+</pre></code></p>
+
+<p>It's important to note, I suppose, that this is longer than the original class! However, the API of the class hasn't changed, and all of the dependencies have been removed from the method we're interested in. The small additional methods that have been generated can be refactored out later, the point is to do this simple change and get the system under test as soon as possible, then we can do our subsequent refactoring with a safety net in place.
+
+<p>If you have an IDE that can do refactorings like this (Extract Method) for you, then use the features! It's easy to make a mistake in even a little refactoring like this one and you should be very nervous about untested code.
+
+<p>To test the class we need to replace the two protected functions. One way of doing that would be to write a concrete MyTestableClass that extends MyClass and replace those methods and test that instead, but we can achieve effectively the same thing in PHPUnit using Partial Mocks. A partial mock is one that behaves exactly like the original class except when certain specific methods are called.
+
+<p>The test for the class could therefore look something like the following, note that all of the testing is done via expectations on the mock rather than via assertions:
+
+<p><code><pre>
+class MyClassTest extends PHPUnit_Framework_Testcase
+{
+
+    public function testGetDataAndPublishRemotely()
+    {
+        $class = $this-&gt;getMock('MyClass', 
+            array('_getUnpublishedDataFromDatastore', '_publishDataRemotely'));
+        
+        $class-&gt;expects($this-&gt;once())
+            -&gt;method('_getUnpublishedDataFromDatastore')
+            -&gt;will($this-&gt;returnValue(' hel123lo wo00rld    '));
+            
+        $class-&gt;Expects($this-&gt;once())
+            -&gt;method('_publishDataRemotely')
+            -&gt;with($this-&gt;equalTo('hello world'));
+        
+        $class-&gt;getDataAndPublishRemotely();
+    }
+
+}
+</pre></code></p>
+
+<p>A purist might say that's testing too much in one test and should be decomposed into different tests, but it's concise enough for me. Note we're testing more than the previous example, which only tested the string cleanup. In this test we are testing:
+
+<ul>
+<li>The string processing</li>
+<li>The fact it requests the data from the DB</li>
+<li>The fact it subsequently tries to publish the data</li>
+</ul>
+
+<p>This isn't the end of the story, because testing a mock seems a bit wrong, and it would be nice to clear up those dependencies properly. The point is that we've done the simplest thing necessary to get the method into a test harness, and subsequent refactorings can all be done with the test suite in place giving you the developer additional confidence to make changes.]]></content>
+        </entry>
+    </feed>

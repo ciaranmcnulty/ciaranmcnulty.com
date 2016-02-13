@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title><![CDATA[Ciaran McNulty]]></title>
+    <link href="/blog/tags/jquery" rel="self"/>
+    <link href="/"/>
+    <updated>2016-02-13T09:34:57+00:00</updated>
+    <id>/</id>
+        <generator uri="http://sculpin.io/">Sculpin</generator>
+            <entry>
+            <title type="html"><![CDATA[Clarifying Javascript-PHP communication using JSON-RPC]]></title>
+            <link href="/clarifying-javascript-php-communication-using-json-rpc"/>
+            <updated>2010-03-15T00:00:00+00:00</updated>
+            <id>/clarifying-javascript-php-communication-using-json-rpc</id>
+            <content type="html"><![CDATA[<p>I think of myself first and foremost as a PHP developer but serious sites are getting more and more JS-heavy as time goes on so it gets harder (and less pragmatic) to try and avoid dealing with JS<->PHP communication of some sort.</p>
+
+<p>I'm a big advocate of RESTful design so tend to end up attempting to write scripts that do lots of GETs and POSTs (as appropriate) and parsing out whatever custom response format I've decided JSON requests will return.  It feels good - like I'm sticking to my principles and 'doing it right' but it's a long painful slog that can feel like self-flagellation at times.</p>
+
+<p>It's also slow and hard to prototype - it's hard to argue in favour of some abstract design idea when it's making you take forever to generate simple tasks .  Sometimes when I feel lazy what I really want is a way of calling my PHP objects directly from the JS and not worrying about what's happening in the underlying HTTP, and that's what <a href="http://json-rpc.org">JSON-RPC</a> provides.</p>
+
+<p>In this blog I'll be showing some simple examples of JSON-RPC in action but first let's look at the pros and cons.</p>
+
+<h4>Why JSON-RPC is awesome:</h4>
+
+<ul>
+<li>It includes basic error handling as part of the protocol</li>
+<li>It hides away all the client-server communications from me the developer</li>
+<li>It looks a bit like SOAP so is fairly familiar</li>
+<li>I don't have to spend time writing RESTful response formats and pondering URLs to get working code</li>
+</ul>
+
+<h4>Why JSON-RPC sucks:</h4>
+
+<ul>
+<li>It's not <a href="http://en.wikipedia.org/wiki/Rest">REST</a>ful - requests from the client come in as POSTs to on URL without a clear semantic 'resource' behind it</li>
+<li>There may be specifics to the HTTP that aren't covered by the abstraction</li>
+</ul>
+
+<p>I suspect a lot of developers reading the lists above will be thinking "hell yeah, sounds good, how can I have it?"</p>
+
+<h4>The protocol</h4>
+
+<p>I won't go into all the ins and outs of the protocol but it's worth taking a quick look.  The basic paradigm is that the server has a bunch of methods that can be called by the client, that take different parameters.</p>
+
+<p>An example request is a POST to the server that looks like this:</p>
+
+<p><tt>{ "method": "greet", "params": ["Ciaran"], "id": 1234 }</tt></p>
+
+<p>This is the PHP equivalent of $server->greet("Ciaran").  The ID parameter is used to match up requests and responses.  The response would look like this:</p>
+
+<p><tt>{ "result": "Hello Ciaran", "error": null, "id": 1234 }</tt></p>
+
+<p>So the result is a string literal with no error conditions - there's not much more to it than that to be honest, aside from error handling.</p>
+
+<p>It would be fairly simple to implement either side of the protocol yourself on a project, but the real strength is of course that once something is a standard, the rest of the world goes to work on it and starts writing up libraries that lazy programmers like us can use! Let's take a look at two libraries, a Zend Framework one on the PHP end and a jQuery one on the Javascript end.</p>
+
+<h4>JSON-RPC in PHP: Zend_Json_Server</h4>
+
+<p><a href="http://framework.zend.com/manual/en/zend.json.server.html">Zend_Json_Server</a> is pretty simple to use, you will need a class that exposes and handles the methods you're going to be using that's properly docblock commented (this is used by the component to see the parameter and return types):</p>
+
+<code><pre>class My_Service_Handler
+{
+    /**
+    * @param string $name
+    * @return string
+    */
+    public function greet($name)
+    {
+        return "Hello $name";
+    }
+}
+</code></pre>
+
+<p>You can then proxy JSON-RPC requests along into this object using the Zend Framework component, Zend_Json_Server:</p>
+
+<code><pre>
+$server = new Zend_Json_Server();
+$server->setClass('My_Service_Handler');
+$server->handle();
+</pre></code>
+
+<p>Now any requests like our examples above will get an appropriate response.  Again fairly straightforward stuff I think, and should be familiar to anyone who's used a SOAP server in PHP.  All of the complexity of decoding the response and encoding the request is handled by the component.</p>
+
+<h4>JSON-RPC in JQuery: zendjsonrpc</h4>
+
+<p>There are a huge number of jQuery plugins to do JSON-RPC, but <a href="http://plugins.jquery.com/project/zendjsonrpc">this one is specifically written to work with the Zend_Json_Server</a> so I figured it's as good an example as any.  If you look at the source code of the plugin it's fairly straightforward and I'm sure it'd be easy to write your own if you preferred.  The basic usage is:</p>
+
+<code><pre>
+var client = jQuery.Zend.jsonrpc({url: '/path/to/service/handler.php'});
+var message = client.greet("Ciaran");
+alert(message);
+</pre></code>
+
+<p>As you can see, once the client object is constructed with the service URL you as a developer have a local JS object that exposes the exact same methods the My_Service_Handler has.</p>
+
+<h4>Overall</h4>
+
+<p>What I really find attractive about the JSON-RPC protocol is that, well, someone else has implemented it for me in the two components above.  That means that I can stop worrying about AJAX and start pretending that my PHP object is somehow present locally in my JS and that I can just call its methods at will.</p>
+
+<p>That's a really powerful abstraction. No doubt like most abstractions there are places where it leaks around the edges but the simplicity of the idea and the clarity it brings to JS<->PHP communication make it an approach I'll be certainly investigating for my next JS-heavy project.</p>
+]]></content>
+        </entry>
+    </feed>

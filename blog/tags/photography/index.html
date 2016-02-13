@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title><![CDATA[Ciaran McNulty]]></title>
+    <link href="/blog/tags/photography" rel="self"/>
+    <link href="/"/>
+    <updated>2016-02-13T09:34:57+00:00</updated>
+    <id>/</id>
+        <generator uri="http://sculpin.io/">Sculpin</generator>
+            <entry>
+            <title type="html"><![CDATA[Changing an image&#039;s aspect ratio without distortion, using Liquid Rescale]]></title>
+            <link href="/changing-an-images-aspect-ratio-without-distortion-using-liquid-rescale"/>
+            <updated>2009-04-16T00:00:00+00:00</updated>
+            <id>/changing-an-images-aspect-ratio-without-distortion-using-liquid-rescale</id>
+            <content type="html"><![CDATA[<p>Sometimes it's useful to be able to change the shape of a photo - on our website PropertyMall, we like the <a href="http://www.propertymall.com/property/search?submit=Submit">thumbnails on our property search results</a> to be a nice uniform size.  Rather than stretch the images, we've chosen on that site to crop them down to the correct size, however this approach can sometimes have odd results.</p>
+
+<p>I've just been looking at the <a href="http://liquidrescale.wikidot.com/">Liquid Rescale plugin for GIMP</a>, which attempts to let you rescale images to different aspect ratios without having to distort or crop out the important details.  The technology used is Seam Carving, which you can read about in this <a href="http://www.faculty.idc.ac.il/arik/imret.pdf">paper by Shai Avidan and Ariel Shamir</a>, or watch <a href="http://www.youtube.com/watch?v=6NcIJXTlugc">a video about it on Youtube</a>. </p>
+
+<p>As an example, imagine I had a system that only accepted square images. Here is a picture I took a while back of some elephants:</p>
+
+<p><a href="http://www.flickr.com/photos/ciaranmcnulty/430148669/" title="Elephants crossing by CiaranJMcNulty, on Flickr"><img src="http://farm1.static.flickr.com/166/430148669_f2364b452a_m.jpg" width="180" height="240" alt="Elephants crossing" /></a></p>
+
+<p>Using traditional tools, I have two choices for making it square: I can stretch it or crop it.</p>
+
+<div class="figure">
+<a href="http://www.flickr.com/photos/ciaranmcnulty/3446656645/" title="Elephants pic, with comparison of stretched and cropped versions by CiaranJMcNulty, on Flickr"><img src="http://farm4.static.flickr.com/3338/3446656645_a671dd5a10.jpg" width="500" height="182" alt="Elephants pic, with comparison of stretched and cropped versions" /></a>
+<p class="caption">The original, scaled and cropped versions</p>
+</div>
+
+<p>In the scaled version, the elephants look far too fat, while in the cropped version some of the interesting foreground and background are missing (ok, you may disagree that they're interesting but let's assume a more talented photographer took it).  What Liquid Rescale offers is a way of preserving the dimensions on the Elephants, which are quite easy to spot when they're wrong, while allowing the water, riverbank and trees to be scaled because that scaling will be much harder to spot.</p>
+
+<p>Just running the image through the plugin gives a slightly better result than the scaled version, but the elephants still look stretched a bit.  The reason for this is presumably that the river isn't uniform enough for the algorithm to detect that it's scaleable.  The plugin allows you to specify certain areas of the image as inviolable, by scribbling over them with a mask - the whole process is quite simple and gives a very acceptable result:</p>
+
+<div class="figure">
+<a href="http://www.flickr.com/photos/ciaranmcnulty/3446656647/" title="Elephants pic, with example mask and Liquid Rescale by CiaranJMcNulty, on Flickr"><img src="http://farm4.static.flickr.com/3585/3446656647_50b494039f.jpg" width="500" height="201" alt="Elephants pic, with example mask and Liquid Rescale" /></a>
+<p class="caption">The original, original with a mask, and the liquid rescaled version</p>
+</div>
+
+<p>As you can see, knowing that the elephants should be preserved, the algorithm has picked parts of the river and bank to stretch, and the final result is pretty good! I don't think I'd know at first glance that anything had been moved around.  Designers have been doing this sort of thing for years, of course, but normally with a bit more Photoshop effort, and some gruelling use of the clone tool.</p>
+
+<p><a href="http://www.flickr.com/photos/ciaranmcnulty/3447514412/" title="Elephants crossing, Liquid Rescaled by CiaranJMcNulty, on Flickr"><img src="http://farm4.static.flickr.com/3311/3447514412_b48614b49b_m.jpg" width="240" height="240" alt="Elephants crossing, Liquid Rescaled" /></a></p>
+
+<p>Of course, my main interest was in doing this automatically for website-building purposes, and I have to say the results without adding the hint mask were very disappointing.  However, it seems a useful tool for meddling with my photos in future, so my time wasn't completely wasted.  If I were to pursue this in future for our property thumbnails, I'd have to take a look 'under the hood' at the algorithm and see if there was a way of optimising it for 'building' colours and not for 'sky' colours, but that's not really something I'm likely to find the time for!</p>
+
+<p>If you want to give it a go yourself, Linux people can <a href="http://liquidrescale.wikidot.com/en:download-page">get the GIMP plugin</a>, or Photoshop users can upgrade to CS4 where the same technology is used and called 'Content Aware Scaling'.</p>]]></content>
+        </entry>
+            <entry>
+            <title type="html"><![CDATA[Autostitch is witchcraft]]></title>
+            <link href="/autostitch-is-witchcraft"/>
+            <updated>2008-06-13T00:00:00+00:00</updated>
+            <id>/autostitch-is-witchcraft</id>
+            <content type="html"><![CDATA[<p>Arthur C Clarke once said that <q>any sufficiently advanced technology is indistinguishable from magic</q>.  I always knew that some day something would come along that my brain just couldn't comprehend, I didn't realise that would happen before I was thirty.</p>
+
+<p>Stitching panoramas together is something we've all tried to do.  I've in the past spent some unproductive hours in Photoshop trying to scale, skew and match snaps together myself.  I've also spent hours adding 'control points' to images in various shareware applications, all with middling results.</p>
+
+<p>However, I appear to have been missing out on a big revolution. Nearly five years ago M. Brown and D. G. Lowe presented a very interesting paper that <a href="http://www.cs.ubc.ca/~mbrown/papers/iccv2003.pdf">you can read here</a> (PDF).  They came up with an algorithm called 'Autostitch' that had some interesting properties - given a large set of photos it can identify which of them have common features and stitch them together on its own - without any user input at all!</p>
+
+<p>Frankly I was suspicious that it would work, but I gamely downloaded the demo of <a href="http://www.michaelhanscom.com/eclecticism/2006/04/05/calico-autostitch-for-mac-os-x/">Calico, a Mac app that implements Autostitch</a>.</p>
+
+<p>I was amazed by the results enough that I got the full version almost immediately.  The first sequence of photos I gave it was the following:</p>
+
+<div class="figure"><a href="http://www.flickr.com/photos/ciaranmcnulty/2575286811/" title="Larger version of the photos, on Flickr"><img src="http://farm4.static.flickr.com/3263/2575286811_ecbcd8e867.jpg" width="500" height="80" alt="Bukhara panorama - the raw photos"/></a>
+<p class="caption">A typical set of overlapping photos</p>
+</div>
+
+<p>With basically no intervention from me aside from selecting the photos in a file dialog, Calico generated the following:</p>
+
+<div class="figure"><a href="http://www.flickr.com/photos/ciaranmcnulty/2576115498/" title="Larger version of the photo, on Flickr"><img src="http://farm4.static.flickr.com/3039/2576115498_4cc989ca2f.jpg" width="500" height="157" alt="Bukhara panorama - the autostitch output"/></a>
+<p class="caption">The raw output from Autostitch</p>
+</div>
+
+<p>Pretty impressive stuff!  A bit of cropping in photoshop and it tidied up pretty well:</p>
+
+<div class="figure"><a href="http://www.flickr.com/photos/ciaranmcnulty/2576118350/" title="Larger version of the photo, on Flickr"><img src="http://farm4.static.flickr.com/3278/2576118350_1f7cfd02b7.jpg" width="500" height="140" alt="Bukhara panorama - cropped and filled in"/></a>
+<p class="caption">Cleaned up a bit and nicely cropped</p>
+</div>
+
+<p>I can sense that I'm going to spend a lot of time on holiday in future standing in one spot slowly rotating with my camera!</p>
+
+<p>A couple more shots I've done, to show how good the results are.  I really can't stress enough how simple the software is - it's a couple of clicks and bingo, a nice high-quality panorama pops out.</p>
+
+<div class="figure">
+<a href="http://www.flickr.com/photos/ciaranmcnulty/2576443000/" title="Khiva rooftop panorama by CiaranJMcNulty, on Flickr"><img src="http://farm4.static.flickr.com/3045/2576443000_909ceb5d8f.jpg" width="500" height="98" alt="Khiva rooftop panorama"/></a>
+</div>
+
+<div class="figure">
+<a href="http://www.flickr.com/photos/ciaranmcnulty/2575618313/" title="Bukhara mosque panorama by CiaranJMcNulty, on Flickr"><img src="http://farm4.static.flickr.com/3040/2575618313_a367fe58c2.jpg" width="500" height="121" alt="Bukhara mosque panorama"/></a>
+</div>]]></content>
+        </entry>
+    </feed>

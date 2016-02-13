@@ -1,0 +1,67 @@
+body { 
+    font-size: 12pt;
+    font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
+    color: #666;
+    margin: 0;
+    padding: 0;
+}
+
+section, 
+header {
+    display: block;
+    padding: 0.5em;
+    margin: 0;
+}
+
+header {
+    background-color: #666;
+}
+
+    header h1 {
+        color: #eee;
+        font-size: 1.6em;
+        font-weight: normal;
+        margin-top: 0;
+        margin: 0;
+    }
+
+        header h1 a{
+            text-decoration: none;
+            color: #eee;
+        }
+
+section h2, 
+section h3, 
+section h4{
+    font-weight: normal;
+    color: #333;
+    margin: 0;
+}
+
+    section h2,
+    section h3 {
+        font-size: 1.2em;
+        margin: 0 0 0.8em 0;
+    }
+    
+        section h3 time{
+            font-size: 0.8em;
+        }
+
+            section h3 time:before{
+                content: "on ";
+            }
+
+    section h4 {
+        font-size: 1em;
+        margin: 0 0 1em 0;
+    }
+    
+    section ul {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+    
+code {
+    font-size: 0.8em;
+}
