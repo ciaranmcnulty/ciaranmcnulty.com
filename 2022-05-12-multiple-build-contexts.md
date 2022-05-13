@@ -107,7 +107,7 @@ docker buildx build . \
 
 ## Breaking stages into separate Dockerfiles
 
-On one project we have a large complex codebase, where separate stages are used for a frontend build pipeline that's maintained almost entirely independently, while the main application is in PHP.
+On a large complex codebase, we use separate stages for the main PHP application, and a frontend build pipeline that's maintained almost entirely independently.
 
 A very simplified version would look like this:
 ```Dockerfile
@@ -162,7 +162,7 @@ docker buildx bake -f docker-bake.hcl
 
 ## Grabbing files from a private git repository
 
-An existing project does something like this, to clone a private (GitLab) repository and then copy selected files out of it
+Another project does something like this, to clone a private (GitLab) repository and then copy selected files out of it
 
 ```Dockerfile
 FROM git AS git-src
@@ -195,7 +195,7 @@ The git repository will be cloned and retained, so rebuilding will only do the e
 
 ##  Copying files from an online tarball
 
-In one project, I had to grab some files from another project's build artefact which was published as a `.tar.gz`. It looked something like this:
+In one older project, I had to grab some files from another project's build artefact which was published as a `.tar.gz`. It looked something like this:
 
 ```Dockerfile
 FROM alpine AS deps
