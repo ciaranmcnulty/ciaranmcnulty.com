@@ -2,167 +2,158 @@
 
 Dockerfile 1.4 has a new feature, 'multiple build contexts', and I've already found a few interesting use cases for it. 
 
-There are plenty of write-ups about the details of this new feature, including [this excellent one by Tonis Tiigi](https://www.docker.com/blog/dockerfiles-now-support-multiple-build-contexts/) so the main aim of this article is to show some other cool stuff I've found that you can do with it.
-
-## What's it about?
-
-When building using a Dockerfile, you can get already add files to an image in lot of different ways:
-
- 1. `COPY` or `ADD` them from a local filesystem build context (e.g. `docker build .`)
- 2. `COPY` or `ADD` them from a remote build context (e.g. `docker build https://github.com/myrepo/myproject#branch`)
- 3. `COPY` them `--from` another Docker reference (e.g. `COPY --from=composer:2.3 /usr/bin/composer`)
- 4. `ADD` them from a URL (e.g. `ADD https://github.com/ubuntu/libreoffice/archive/refs/tags/7.3.3.2-20220428.tar.gz`)
- 5. Generate them by `RUN`-ing some command, which could of course be doing a network operation (e.g. `RUN npm install`)
- 6. `COPY` them `--from` a different build target (e.g. `COPY --from=deps /build/app.js /public/app.js`). In this case you need to have used one of the above methods to get them into that other target.
+There are plenty of write-ups about the details of this feature, including [this excellent one by Tonis Tiigi](https://www.docker.com/blog/dockerfiles-now-support-multiple-build-contexts/) so the main aim of this article is to show some cool stuff you can do with it.
 
 ## What are Multiple Build Contexts?
 
-The TL;DR version is that this new feature allows you to specify additional named build contexts aside from the main one.
+To get files into an image, we can:
 
-For example, in a 'normal' docker build:
+ * COPY/ADD them from the build context
+ * ADD a remote source
+ * RUN something that generates files
+ * COPY them from another image, or another build stage
+
+The TL;DR version is that this new feature allows you to specify additional named build contexts, aside from the main one, from which you can fetch files.
+
+In a 'normal' docker build you have exactly one 'build context'. Here it is the current folder:
 
 ```bash
-docker build .
+docker buildx build .
 ```
 
-You have exactly one 'build context' that is the current folder.
-
-If you're using buildx you can now do this instead:
+The new feature allows you to specify more build contexts. Here we add an additional one called 'foo':
 
 ```bash
-docker buildx build --build-context foo=../bar
+docker buildx build . --build-context foo=../bar 
 ```
 
-You now have the main build context _and_ an additional context that's named 'foo'.
+When you `COPY --from=foo` the builder will look for following places, in priority order:
 
-Here we have to use `buildx` because it has a CLI flag that lets us specify the additional contexts. It's expected that other builders (e.g. `docker compose`) will add ways to specify the additional contexts too (e.g. in Yaml).
+ 1. *An additional named context* with that name (i.e. `--build-context foo=...`) - this is the new behaviour
+ 2. A local build stage with that name (i.e. `FROM ... AS foo`)
+ 3. An image with that reference (i.e. `docker.io/library/foo`) 
 
-The important change is that the Dockerfile behaviour has been clearly defined: when you `COPY --from=foo` this will now look at the following places in order:
+What makes this so powerful is that the additional contexts can be local files, various remote sources, or other docker images.
 
- 1. *A named additional context* (i.e. `--build-context foo=...`) - this is the new behaviour
- 2. A local build stage with this name (i.e. `FROM ... AS foo`)
- 3. An image with this reference (i.e. `registry.docker.com/_/foo`) 
+In all of these examples we use `buildx` because from version `0.8.0` it has a CLI argument to specify the additional contexts. 
 
-## Is it Dependency Injection?
+It's expected that other builders will add ways to specify the additional contexts too (e.g. `docker compose` will have a way to add them in its Yaml format).
 
-You'll see that in all the use cases below, the Dockerfile no longer knows where the files are coming from. 
+## Dependency Injection?
 
-All of the Dockerfiles now contain just a `COPY --from=<name>`, so to build from different sources we just need to change the CLI invocation.
+You'll see that in all the use cases below, the Dockerfile no longer needs to know where the files are coming from. All of the Dockerfiles now contain only a `COPY --from=<name>`, and to build from different sources we can change the CLI invocation.
 
-For example it's trivial to use the same Dockerfile to get files from disk while developing:
+This adds a powerful new layer of indirection where Dockerfiles are far more reusable across different build environments.
 
-```
---build-context other-project=../other-project
-```
-
-But then on a build server get it from a docker registry instead:
-
-```
---build-context other-project=dockerfile://myregistry.com/other-project:lastest
-```
-
-By naming the copy source rather than hard-coding it into the Dockefile, a powerful layer of indirection is added. 
-
-For me this is the biggest advantage of the new feature, and it makes me think that _in most cases we should be using this feature_ for maximum flexibility.
+For me this is the biggest advantage of the new functionality, and it makes me think that _in most cases we should be using this feature_ for maximum flexibility.
 
 ## Example use cases
 
 Here are some cases I've found interesting, as a way to illustrate what's possible with this powerful new feature. I've tried not to overlap too much with the ideas in [Tonis Tiigi's article](https://www.docker.com/blog/dockerfiles-now-support-multiple-build-contexts/)
 
-### Copying files from another local folder
+### Copying files from another location
 
-Sometimes I might have my main project in one local checkout, and want to copy files in from another local checkout.
+For complicated/historical reasons, one of my projects needs to copy a single file from a 'special' location on the build server.
 
 Before multiple build contexts you would have to either:
- 1. Copy the files into the project folder before you built
- 2. Set the build context to be very broad and add lots of path prefixes to everything
+ 1. Copy the files into the project folder before you build
+ 2. Make a hard link between files, which can get annoying when files are deleted
+ 3. Set the build context to be very broad
+
+We went for option 1 and had to always use the `make` target to build the project, and to `.gitignore` the file so we didn't accidentally commit it back. This was not very clean.
+
+Instead we can now add the extra location as a build context:
 
 ```bash
-docker buildx build . --build-context seo=../seo
+docker buildx build . --build-context special=/path/to/special/directory
 ```
 
 And in the Dockerfile as usual it's just a `COPY`:
 
 ```Dockerfile
-COPY --from=seo /public/robots.txt /public
+COPY --from=special magic_file.cert .
 ```
 
-### Replacing an image with an alternative
+### Replacing a base image with an fork
 
-One project uses a version of Wiremock that doesn't support ARM, so I build a multi-arch image myself and had to replace it when building. The old version started like this:
+One of my projects was based on a version of Wiremock that didn't support ARM64, so I built a multi-arch image myself. 
 
+To be able to replace the base image at build time I had introduced a build argument:
 ```Dockerfile
 ARG BASE_WM_IMAGE
 FROM ${BASE_WM_IMAGE:-wiremock/wiremock:2.31} 
 ```
 
-So to use my forked image instead on my Apple Silicon device:\
-
+And then to replace the base image with my fork at build time I could provide that build argument:
 ```bash
-docker buildx build --build-arg BASE_WM_IMAGE=ciaranmcnulty/wiremock:latest
+docker buildx build . \
+  --build-arg BASE_WM_IMAGE=ciaranmcnulty/wiremock:latest
 ```
 
-This added complexity to the build just to support my use case. We can now revert it to this:
+This added complexity to the build just to support my use case.
 
+We can now go back to a clean Dockerfile:
 ```Dockerfile
 FROM wiremock/wiremock:2.31
 ```
 
-And locally I can override how that string maps to an image reference:
-
+I can now replace the base image by matching my build context's name to the image reference:
 ```bash
 docker buildx build . \
-	--build-context wiremock/wiremock:2.31=docker-image://ciaranmcnulty/wiremock-docker:latest
+  --build-context wiremock/wiremock:2.31=docker-image://ciaranmcnulty/wiremock-docker:latest
 ```
 
 ### Breaking stages into separate Dockerfiles
 
-On one project we have a large complex codebase, where separate build stages are heavily used and in fact are partly maintained by different teams.
+On one project we have a large complex codebase, where separate stages are used for a frontend build pipeline that's maintained almost entirely independently, while the main application is in PHP.
 
-This ends up with one big Dockerfile in the root, with fairly unrelated stages that look something like this:
-
+A very simplified version would look like this:
 ```Dockerfile
-FROM npm AS javascript-build
-COPY js/* .
+FROM npm AS frontend-build
+COPY frontend/scripts .
 #[...JS build pipeline...]
 
-FROM php AS php-build
-COPY php/*
+FROM php AS final
 #[...PHP-specific stuff...]
-
-FROM scratch AS final
-COPY --from=javascript-build /built ./foo
-COPY --from=php-build /built ./bar
+COPY --from=frontend-build /dist/* ./public/
 ```
 
-Really it would make sense to split the build stages into the subfolders they operate on. 
+As this scales it gets messy, and it'd make a lot of sense to be able to maintain multiple Dockefiles. However, up until now we needed to maintain them in one file if we wanted an atomic local build.
 
-Unfortunately currently the only way to split up the Dockerfile into subfolders would require us to also build the `-build` images separately, push them to a registry, then reference the tag used in the main build.
+The only way to split up the Dockerfile into subfolders would have required us to build the `frontend-build` stage separately, tag an image, push it to a registry, then reference that tag in the main build.
 
-This is clearly not ideal, as external coordination is needed (e.g. Makefiles) to ensure references are pushed in the right order, plus we're involving a registry for no reason.
+This would need  external coordination (e.g. `make`) to ensure everything was built in the right order, and would involve a registry for no reason.
 
-We do indeed still need higher-level coordination, but this can be done without a remote registry needed, using a `docker-bake.hcl`:
+We now do still need higher-level coordination, but this now can be done without a remote registry.
 
+We can make a `frontend/Dockerfile` with and move the relevant stages into it:
+```Dockerfile
+FROM npm AS frontend-build
+COPY ./scripts .
+#[...JS build pipeline...]
+```
+
+We can leave the PHP stages in the main `Dockerfile` as-is:
+```Dockerfile
+FROM php AS final
+#[...PHP-specific stuff...]
+COPY --from=frontend-build /dist/* ./public/
+```
+
+And use `docker-bake.hcl` to plug them together:
 ```HCL
 target "default" {
-	context = "."
   contexts = {
-    javascript-build = "target:js",
-    php-build = "target:php",
+    frontend-build = "target:frontend",
   }
 }
 
-target "js" {
-  context = "./js"
-}
-
-target "php" {
-  context = "./php"
+target "frontend" {
+  context = "./frontend"
 }
 ```
 
-This will let us have Dockerfiles in the `php` and `js` subfolders, and one in the root that copies them using the context names as before. To build this we will need to use `bake` instead:
-
+To build this we will need to use `buildx bake` instead of `buildx build` as we're outputting multiple images:
 ```shell
 docker buildx bake -f docker-bake.hcl
 ```
