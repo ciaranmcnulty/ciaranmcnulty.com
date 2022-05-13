@@ -1,10 +1,12 @@
-# Building container images using Multiple Build Contexts and Dockerfiles
+---
+title: Building container images using Multiple Build Contexts and Dockerfiles
+---
 
 Dockerfile 1.4 has a new feature, 'multiple build contexts', and I've already found a few interesting use cases for it. 
 
 There are plenty of write-ups about the details of this feature, including [this excellent one by Tonis Tiigi](https://www.docker.com/blog/dockerfiles-now-support-multiple-build-contexts/) so the main aim of this article is to show some cool stuff you can do with it.
 
-## What are Multiple Build Contexts?
+# What are Multiple Build Contexts?
 
 To get files into an image, we can:
 
@@ -39,7 +41,7 @@ In all of these examples we use `buildx` because from version `0.8.0` it has a C
 
 It's expected that other builders will add ways to specify the additional contexts too (e.g. `docker compose` will have a way to add them in its Yaml format).
 
-## Dependency Injection?
+# Dependency Injection?
 
 You'll see that in all the use cases below, the Dockerfile no longer needs to know where the files are coming from. All of the Dockerfiles now contain only a `COPY --from=<name>`, and to build from different sources we can change via the CLI invocation.
 
@@ -47,11 +49,11 @@ This adds a powerful new layer of indirection where Dockerfiles are far more reu
 
 For me this is the biggest advantage of the new functionality, and it makes me think that _in most cases we should be using this feature_ for maximum flexibility.
 
-## Example use cases
+# Example use cases
 
 Here are some cases I've found interesting, as a way to illustrate what's possible with this powerful new feature. I've tried not to overlap too much with the ideas in [Tonis Tiigi's article](https://www.docker.com/blog/dockerfiles-now-support-multiple-build-contexts/)
 
-### Copying files from another location
+## Copying files from another location
 
 For complicated/historical reasons, one of my projects needs to copy a single file from a 'special' location on the build server.
 
@@ -74,7 +76,7 @@ And in the Dockerfile as usual it's just a `COPY`:
 COPY --from=special magic_file.cert .
 ```
 
-### Replacing a base image with an fork
+## Replacing a base image with an fork
 
 One of my projects was based on a version of Wiremock that didn't support ARM64, so I built a multi-arch image myself. 
 
@@ -103,7 +105,7 @@ docker buildx build . \
   --build-context wiremock/wiremock:2.31=docker-image://ciaranmcnulty/wiremock-docker:latest
 ```
 
-### Breaking stages into separate Dockerfiles
+## Breaking stages into separate Dockerfiles
 
 On one project we have a large complex codebase, where separate stages are used for a frontend build pipeline that's maintained almost entirely independently, while the main application is in PHP.
 
@@ -158,7 +160,7 @@ To build this we will need to use `buildx bake` instead of `buildx build` as we'
 docker buildx bake -f docker-bake.hcl
 ```
 
-### Grabbing files from a private git repository
+## Grabbing files from a private git repository
 
 An existing project does something like this, to clone a private (GitLab) repository and then copy selected files out of it
 
@@ -191,7 +193,7 @@ The git repository will be cloned and retained, so rebuilding will only do the e
 
 (Note that `COPY --from=https://git...` has never worked)
 
-###  Copying files from an online tarball
+##  Copying files from an online tarball
 
 In one project, I had to grab some files from another project's build artefact which was published as a `.tar.gz`. It looked something like this:
 
