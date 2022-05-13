@@ -41,7 +41,7 @@ It's expected that other builders will add ways to specify the additional contex
 
 ## Dependency Injection?
 
-You'll see that in all the use cases below, the Dockerfile no longer needs to know where the files are coming from. All of the Dockerfiles now contain only a `COPY --from=<name>`, and to build from different sources we can change the CLI invocation.
+You'll see that in all the use cases below, the Dockerfile no longer needs to know where the files are coming from. All of the Dockerfiles now contain only a `COPY --from=<name>`, and to build from different sources we can change via the CLI invocation.
 
 This adds a powerful new layer of indirection where Dockerfiles are far more reusable across different build environments.
 
@@ -87,7 +87,7 @@ FROM ${BASE_WM_IMAGE:-wiremock/wiremock:2.31}
 And then to replace the base image with my fork at build time I could provide that build argument:
 ```bash
 docker buildx build . \
-  --build-arg BASE_WM_IMAGE=ciaranmcnulty/wiremock:latest
+  --build-arg BASE_WM_IMAGE=ciaranmcnulty/wiremock-docker:latest
 ```
 
 This added complexity to the build just to support my use case.
