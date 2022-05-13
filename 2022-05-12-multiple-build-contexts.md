@@ -118,7 +118,7 @@ FROM php AS final
 COPY --from=frontend-build /dist/* ./public/
 ```
 
-As this scales it gets messy, and it'd make a lot of sense to be able to maintain multiple Dockefiles. However, up until now we needed to maintain them in one file if we wanted an atomic local build.
+As this scales it gets messy, and it'd make a lot of sense to be able to maintain multiple Dockerfiles. However, up until now we needed to maintain them in one file if we wanted an atomic local build.
 
 The only way to split up the Dockerfile into subfolders would have required us to build the `frontend-build` stage separately, tag an image, push it to a registry, then reference that tag in the main build.
 
