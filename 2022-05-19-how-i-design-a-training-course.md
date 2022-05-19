@@ -182,7 +182,7 @@ For a less experienced group, or if it's one subject amongst many, I might write
 I capture the understanding in two new columns (working right-to-left):
 
 | Target learners | Outcomes | Needs |
-|:------|
+|:------|:------|:------|
 | Delivery teams and product stakeholders | Can describe how 'shifting left' promotes shared understanding | More collaboration between Java and FE teams |
 | Delivery teams and product stakeholders | Can list the key characteristics of a clear requirements document | Clearer requirements at sprint start  |
 | Delivery teams and product stakeholders | Can name five ways to slice a feature  | Clearer requirements at sprint start  |
@@ -205,10 +205,10 @@ I'll try out different arrangements of the ideas, working out which to take out 
 
 I'll add/reword/remove stuff as I go, to try and get to an achievable set of goals for the course length constraints.
 
-I continue to work right-to-left, merging the role+dates columns as it gets concrete
+As it starts to look more concrete and achievable, I remove the learner column (and merge it into the days if I split the learners)
 
 | Day | Outcomes | Needs |
-|:------|
+|:------|:------|:------|
 | 1 (All) | Can describe how 'shifting left' promotes shared understanding | More collaboration between Java and FE teams |
 |  | Can name five ways to slice a feature  | Clearer requirements at sprint start  |
 |  | Can take part in an effective backlog review | Clearer requirements at sprint start          |
@@ -315,7 +315,7 @@ Timings will change as you tweak the plan, and _will_ be different on the day!  
 (From here on I'm only going to show a horizontal slice of the outline; there would be more before and after each example)
 
 | Day | Timings | Checkpoints | Outcomes | Needs |
-|:------|
+|:------|:------|:------|:------|:------|
 | 1 (all) |  30 mins  |  Review a backlog in groups |Can take part in an effective backlog review | Clearer requirements at sprint start |
 
 
@@ -338,7 +338,7 @@ Timings are still approximate and exercises or discussions can flex, so don't be
 As a general rule I'd probably not put more than 6 hours in a day, at an absolute maximum. It's better to have less, and more time for side-discussions.
 
 | Day |  Timings | Activities | Checkpoints | Outcomes | Needs |
-|:------|
+|:------|:------|:------|:------|:------|:------|
 | 1 (all) |  ??  | Presentation - introduce concept of Definition of Ready |   |  |  |
 |  |  15 mins  |  Discussion in pairs with prompts - designing a DoR | |  |  |
 |  |  30 mins  | | Practice backlog review session | Can take part in an effective backlog review | Clearer requirements at sprint start |
@@ -357,7 +357,7 @@ This is where I start to build an idea of the work I need to do before deliverin
 Of course at this stage I may not know, it's fine to put a question mark or a vague comment. I'm trying to understand whereto gaps are too.
 
 | Day |  Timings | Prep | Activities | Checkpoints | Outcomes | Needs |
-|:------|
+|:------|:------|:------|:------|:------|:------|:------|
 | 1 (all) |  ??  | Define the key points to cover | Presentation - introduce concept of Definition of Ready |   |  |  |
 |  |  15 mins  | Generate the discussion prompts |  Discussion in pairs with prompts - designing a DoR | |  |  |
 |  |  30 mins  | Tweak what we did on the Widgets-R-Us training | |  Practice backlog review session | Can take part in an effective backlog review | Clearer requirements at sprint start |
@@ -369,14 +369,14 @@ The outline should also make it clear what pre-prepared material I need to have 
 For some courses I will be able to go along with just a head full of ideas:
 
 | Timings | Prep | Materials | Activities | Checkpoints | Outcomes | Needs |
-|:------|
+|:------|:------|:------|:------|:------|:------|:------|
 | most of the morning | Pick an example business domain | The usual set of stickies and sharpies | Event storming | |  |
 | half hour before lunch |  |  |  | 1,2,4 all - what is unclear about the process? Answer where possible | Can take part in a big picture event storming session  | Improved understanding of business processes |
 
 For other subjects I'll need at least some level of written material, diagrams, and prompts:
 
 | Timings | Prep | Materials | Activities | Checkpoints | Outcomes | Needs |
-|:------|
+|:------|:------|:------|:------|:------|:------|:------|
 | ??  | Define the key points to cover | Key points in trainer notes | Presentation - introduce concept of Definition of Ready |   |  |  |
 | 15 mins  | Generate the discussion prompts | Written prompts in workbooks  | Discussion in pairs with prompts - designing a DoR | |  |  |
 | 30 mins  | Tweak what we did on the Widgets-R-Us training | Example backlog items on A5 (print 4-per-page on A4 and cut). 4 sets? | |  Practice backlog review session | Can take part in an effective backlog review | Clearer requirements at sprint start |
