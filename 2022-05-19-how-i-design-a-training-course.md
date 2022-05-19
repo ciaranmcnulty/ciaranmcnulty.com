@@ -130,7 +130,7 @@ I capture this offline or online in various formats. A table is best for this po
 
 I want to emphasise that I do this very scrappily, then refine it. To prove that, here is a picture taken a few years ago with [Jakub Zalas](https://twitter.com/jakzal)
 
-![Jakub with a table full of stickies and a pint](22-05-19/jakub.jpeg)
+![Jakub with a table full of stickies and a pint](2022-05-19/jakub.jpeg)
 
 We had an in-person meeting with a customer, went for lunch around the corner, and did most of this step on the table. The result was refined and formed the backbone of a 2-day course, delivered across more than 15 teams.
 
