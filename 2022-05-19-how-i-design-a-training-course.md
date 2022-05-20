@@ -430,7 +430,7 @@ The rest of the notes very follow the structure of the outline, with more detail
 
 > "An agreed definition of what stories need, to be available and up for discussion on the sprint planning meeting"
 
- * Ask what think it means. Clarify.
+ * Ask what they think it means. Clarify.
 
 ## Discussion - 20-30 min
 
