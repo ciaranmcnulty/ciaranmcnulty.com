@@ -250,9 +250,11 @@ My emails are fairly casual, and directly inspired by my meeting notes and the o
 ```
 Hi Bob
 
-Thanks to you and Freja for your time, I think I've got a good understanding of the key challenges you are facing:
+Thanks to you and Freja for your time, I think I've got a good understanding 
+of the key challenges you are facing:
 
- - The backlog of work is increasing, but you don't think the bottlenecks are technical
+ - The backlog of work is increasing, but you don't think the bottlenecks 
+ are technical
  - Items are started and not finished for some time later
  - The sprints are not regularly delivering value
 
@@ -261,22 +263,26 @@ The training would aim to:
  - Improve the clarity of requirements to reduce misunderstandings and waste
  - Focus the team on finishing work in progress instead of taking on more
 
-I suggest we deliver 2-day course around Agile topics with some BDD themes that would address some of your specific issues, with non-technical roles involved heavily in day 1.
+I suggest we deliver 2-day course around Agile topics with some BDD themes that 
+would address some of your specific issues, with non-technical roles involved 
+heavily in day 1.
 
 Title: Agile Product Development
 
 Day 1: The two delivery teams, Product Owner, BAs
 
 Attendees will learn how to:
- - describe how earlier collaboration promotes a shared understanding of requirements
- - slice a feature into smaller achievable chunks, using a appropriate strategies
+ - describe how earlier collaboration promotes a shared understanding 
+ of requirements
+ - slice a feature into smaller achievable chunks, using appropriate strategies
  - have effective backlog reviews to ensure clear requirements at sprint start
  
 Day 2: The two delivery teams only
 
 After this day attendees will:
  - understand why shorter backlogs improve responsively
- - have a clear model of how work moves through the various backlogs of the delivery team processes
+ - have a clear model of how work moves through the various backlogs of the 
+ delivery team processes
  - be able to identify and unblock bottlenecks in the delivery team
  
 For this, [COMMERCIAL DETAILS GO HERE, NEAR TO BENEFITS]
