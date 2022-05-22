@@ -24,7 +24,7 @@ Another big influence is the way [Cucumber](https://cucumber.io/school/) design 
 
 I've contributed and delivered their BDD courses in-person and online, and their very interactive courses helped me step back from some of the heavily-presentational style I'd been using for my own courses.
 
-In particular co-delivering training with [Matt Wynne](https://twitter.com/mattwynne), and using the excellent trainer notes from [Seb Rose](https://twitter.com/sebrose) have really fed back into my style (also I should plug [Training from the Back of the Room]()).
+In particular co-delivering training with [Matt Wynne](https://twitter.com/mattwynne), and using the excellent trainer notes from [Seb Rose](https://twitter.com/sebrose) have really fed back into my style.
 
 # What sort of training formats am I talking about?
 
