@@ -1,6 +1,5 @@
 ---
 title: How I design a training course from scratch - part 1
-published: false
 ---
 
 I've been working on and off in the field of 'tech industry training' for nearly a decade now. I want to talk about how I make the journey from an initial conversation with a customer to being ready to deliver the training.
