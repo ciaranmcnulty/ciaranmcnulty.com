@@ -290,9 +290,7 @@ For this, [COMMERCIAL DETAILS GO HERE, NEAR TO BENEFITS]
 Please let me know how you want to proceed.
 ```
 
-If you've managed to understand what their issues are and explain how you'd address them, you'll get a quick yes or no.
-
-It's been fairly rare for customers to over-tweak proposals of this sort that I've made before agreement. Fairly often I've found they'll want to agree + then schedule a call to add stuff.
+If I've managed to understand what their issues are and explain how I'd address them, I'll generally expect a rapid reply.
 
 ## What next?
 
