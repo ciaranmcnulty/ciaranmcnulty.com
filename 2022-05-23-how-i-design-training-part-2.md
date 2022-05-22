@@ -70,7 +70,7 @@ I allow myself to be vague on some of the activities and focus more on what _typ
 
 As with checkpoints you're still trying to shape the day and keep some variety of activity on the part of the learners.
 
-I capture the activities in my table. I am still broadly working right-to-left, but I keep the timings on the right and I'll place the learning activities above the checkpoints they relate to, so it's becoming more like an agenda.
+I capture the activities in my table. I am still broadly working right-to-left, but I keep the timings on the left and I'll place the learning activities above the checkpoints they relate to, so it's becoming more like an agenda.
 
 I now might start to think about where breaks and lunch would naturally fit, and check that I'm not putting too much into each day.
 
@@ -120,7 +120,7 @@ For other subjects I'll need at least some level of written material, diagrams, 
 |:------|
 | ??  | Define the key points to cover | Key points in trainer notes | Presentation - introduce concept of Definition of Ready |   |  |  |
 | 15 mins  | Generate the discussion prompts | Written prompts in workbooks  | Discussion in pairs with prompts - designing a DoR | |  |  |
-| 30 mins  | Tweak what we did on the Widgets-R-Us training | Example backlog items on A5 (print 4-per-page on A4 and cut). 4 sets? | |  Practice backlog review session | Can take part in an effective backlog review | Clearer requirements at sprint start |
+| 30 mins  | Tweak what we did on the Widgets-R-Us training | Example backlog items on A6 (print 4-per-page on A4 and cut). 4 sets? | |  Practice backlog review session | Can take part in an effective backlog review | Clearer requirements at sprint start |
 
 I'll continue to edit the outline, but there is a point where it's in a good enough shape that the level of preparation effort required from me is very clear.
 
@@ -165,11 +165,15 @@ The rest of the notes very follow the structure of the outline, with more detail
 
 ## Introduce concept of Definition of Ready - 10 min
 
- - Ask if they have heard 'Definition of Done'? If they have get a definition and ask how it helps
+- Ask if they have heard 'Definition of Done'? If they 
+ have get a definition and ask how it helps
 
-- Write DoR on whiteboard, either using terms reflecting the DoD definition or:
+- Write DoR on whiteboard, either using terms reflecting 
+ the DoD definition or:
 
-> "An agreed definition of what stories need, to be available and up for discussion on the sprint planning meeting"
+> "An agreed definition of what stories need, to be 
+> available and up for discussion on the sprint planning 
+> meeting"
 
  * Ask what think it means. Clarify.
 
@@ -187,7 +191,8 @@ At end of time capture 'key points' from each pair on flipchart
 
 Prep: cut out and sort backlog items into 4 piles
 
-Organise into 4 groups, give each group a set of backlog items, explain the exercise:
+Organise into 4 groups, give each group a set of backlog
+items, explain the exercise:
 
 [... and so on ...]
 
