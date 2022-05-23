@@ -35,7 +35,7 @@ I'm mostly contacted by people who:
 
 Long-term I think ongoing coaching tends to be more effective than _just_ training courses, but I tend to conform to those expectations for an initial engagement and offer coaching activities as part of follow-up.
 
-For a new area of practice, a training course from an external authority figure is often be a good way to show commitment from the organisation to a new initiative, and can mark a transitional moment where the team 'starts doing X'.
+For a new area of practice, a training course from an external authority figure is often a good way to show commitment from the organisation to a new initiative, and can mark a transitional moment where the team 'starts doing X'.
 
 Incidentally, I tend to think if you're a smart person you can learn any subject well enough to deliver it to a group of learners effectively. The key role of a trainer is to think about how to educate people in a subject clearly, in the right order, and leave them with the right learning outcomes. The skills to do that are subject-agnostic.
 
@@ -96,7 +96,7 @@ They can tell me:
 
 Example notes:
 
-> Freya Thorsdottir - team lead Java
+> Freja Thorsdottir - team lead Java
 >
 > 'we do stuff that never gets used'
 >
