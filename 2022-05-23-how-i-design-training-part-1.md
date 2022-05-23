@@ -134,7 +134,7 @@ I want to emphasise that I do this very scrappily, then refine it. To prove that
 
 ![Jakub with a table full of stickies and a pint](2022-05-23/jakub.jpeg)
 
-We had an in-person meeting with a customer, went for lunch around the corner, and did most of this step on the table. The result was refined and formed the backbone of a 2-day course, delivered across more than 15 teams.
+After the last in a series of in-person meetings with a customer, went for lunch around the corner and did most of this process on the table. The result was refined and formed the backbone of a 2-day course, delivered across more than 15 teams.
 
 ## List the Business's needs
 
