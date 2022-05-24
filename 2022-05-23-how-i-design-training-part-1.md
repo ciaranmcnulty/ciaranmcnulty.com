@@ -130,7 +130,7 @@ I normally only spend 20 minutes at a time on this whole step, let it rest, then
 
 I capture this offline or online in various formats. A table is best for this post, but you can imagine a grid of stickies if you prefer. What I want to share really is the order of thinking.
 
-I want to emphasise that I do this very scrappily, then refine it. To prove that, here is a picture taken a few years ago with [Jakub Zalas](https://twitter.com/jakzal)
+I want to emphasise that I do this very scrappily, then refine it. To prove that, here is a picture taken a few years ago with [Jakub Zalas](https://twitter.com/jakub_zalas)
 
 ![Jakub with a table full of stickies and a pint](2022-05-23/jakub.jpeg)
 
