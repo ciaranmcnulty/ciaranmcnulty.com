@@ -2,7 +2,7 @@
 title: How I design a training course from scratch - part 2
 ---
 
-In a previous article, I explained how I go from an initial client conversation through to a proposal for their approval. 
+In [a previous article](/2022-05-23-how-i-design-training-part-1), I explained how I go from an initial client conversation through to a proposal for their approval. 
 
 If you have not yet read that, I'd encourage you to now.
 

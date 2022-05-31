@@ -300,4 +300,4 @@ Once things are approved, you will have:
  2. Outcomes the course will try to deliver
  3. Length of course
 
-This is a solid foundation for building a training course. How we go from here to 'ready to deliver' will be the subject of the next article!
+This is a solid foundation for building a training course. How we go from here to 'ready to deliver' is covered in [Part 2 of this series](/2022-05-31-how-i-design-training-part-2)
