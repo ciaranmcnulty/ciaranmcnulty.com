@@ -168,13 +168,13 @@ The rest of the notes very follow the structure of the outline, with more detail
  have get a definition and ask how it helps
 
 - Write DoR on whiteboard, either using terms reflecting 
- the DoD definition or:
+ their DoD definition or:
 
 > "An agreed definition of what stories need, to be 
 > available and up for discussion on the sprint planning 
 > meeting"
 
- * Ask what think it means. Clarify.
+ * Ask what they think it means. Clarify.
 
 ## Discussion - 20-30 min
 
